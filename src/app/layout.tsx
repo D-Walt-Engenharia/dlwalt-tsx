@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { JsonLd } from "@/components/JsonLd";
 import { SmoothScroll } from "@/components/SmoothScroll";
@@ -53,7 +54,8 @@ export default async function RootLayout({
     if (res && res.ok) {
       const data = await res.json();
       if (Array.isArray(data)) {
-        scripts = data.filter((s: any) => s.isActive);
+        // Exclude script entries that duplicate Google tag AW-10800412438, which is loaded directly with Next.js Script
+        scripts = data.filter((s: any) => s.isActive && !s.code?.includes("AW-10800412438"));
       }
     }
   } catch (error) {
@@ -86,6 +88,20 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR" className="dark">
       <head>
+        {/* Core Google tag (gtag.js) for AW-10800412438 loaded directly with Next Script */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-10800412438"
+          strategy="beforeInteractive"
+        />
+        <Script id="google-analytics-init" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-10800412438');
+          `}
+        </Script>
+
         {headScripts.map((script: any) => (
           <ScriptRenderer
             key={`script-head-${script.id}`}
@@ -118,5 +134,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-
