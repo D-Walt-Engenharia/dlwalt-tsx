@@ -2,11 +2,8 @@
 export interface FinancingFormData {
   fullName: string;
   cpf: string;
-  rg: string;
   birthDate: string;
   phone: string;
-  motherName: string;
-  profession: string;
   propertyType: string;
   hasDownPayment: string;
   downPaymentValue: string;
@@ -61,10 +58,46 @@ function validBirthDate(value: string): boolean {
 }
 
 function positiveMoney(value: string): boolean {
-  // Values from unformat(..., 'pt-BR') use a decimal point, without a currency
-  // symbol or thousands separator. Keep this wire format unchanged.
+  // The backend receives decimal strings with a period, not a UI currency mask.
   return /^\d+(\.\d{1,2})?$/.test(value) && Number.isFinite(Number(value)) &&
     Number(value) > 0 && Number.isSafeInteger(Math.round(Number(value) * 100));
+}
+
+/**
+ * Plain-text BRL input. Editing never inserts thousands separators or zeroes.
+ * A comma may be typed for cents; a single dot with 1-2 trailing digits is
+ * accepted for keyboards which do not expose a comma key.
+ */
+export function sanitizeMoneyDraft(source: string): string {
+  const clean = source.replace(/[^\d.,]/g, '');
+  if (!clean) return '';
+
+  const comma = clean.lastIndexOf(',');
+  const dots = (clean.match(/\./g) || []).length;
+  const dot = clean.lastIndexOf('.');
+  const dotIsDecimal = comma === -1 && dots === 1 && dot >= 0 &&
+    (clean.length - dot - 1) <= 2;
+  const sep = comma >= 0 ? comma : dotIsDecimal ? dot : -1;
+  const integer = (sep < 0 ? clean : clean.slice(0, sep)).replace(/\D/g, '').slice(0, 12);
+  const fraction = sep < 0 ? '' : clean.slice(sep + 1).replace(/\D/g, '').slice(0, 2);
+  if (!integer && !fraction) return sep >= 0 ? '0,' : '';
+  const normalizedInt = integer.replace(/^0+(?=\d)/, '') || '0';
+  return sep >= 0 ? `${normalizedInt},${fraction}` : normalizedInt;
+}
+
+export function moneyDraftToApiValue(draft: string): string {
+  const normalized = sanitizeMoneyDraft(draft);
+  if (!normalized) return '0';
+  const [integer, cents = ''] = normalized.split(',');
+  return `${integer || '0'}.${(cents + '00').slice(0, 2)}`;
+}
+
+export function formatMoneyBRL(draft: string): string {
+  const normalized = moneyDraftToApiValue(draft);
+  const amount = Number(normalized);
+  if (!Number.isFinite(amount)) return '';
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+    .format(amount).replace(/\u00a0/g, ' ');
 }
 
 /** Client-side guidance. The API must independently validate every field. */
@@ -76,22 +109,19 @@ export function validateFinancingForm(
     ({ field, message, step: at });
 
   if (!step || step === 1) {
+    if (!positiveMoney(data.energyBillValue)) return error('energyBillValue', 'Informe o valor da conta de energia, maior que zero.', 1);
     if (!data.fullName.trim()) return error('fullName', 'Preencha seu nome completo.', 1);
     if (!validCpf(data.cpf)) return error('cpf', 'Confira o CPF e preencha os 11 números.', 1);
-    if (!data.rg.trim()) return error('rg', 'Preencha seu RG.', 1);
     if (!validBirthDate(data.birthDate)) {
       return error('birthDate', 'Informe uma data de nascimento válida no formato dia/mês/ano.', 1);
     }
     if (!/^[1-9]{2}\d{8,9}$/.test(data.phone.replace(/\D/g, ''))) {
       return error('phone', 'Informe o telefone com DDD e todos os números.', 1);
     }
-    if (!data.motherName.trim()) return error('motherName', 'Preencha o nome completo da mãe.', 1);
   }
 
   if (!step || step === 2) {
-    if (!data.profession.trim()) return error('profession', 'Preencha sua profissão.', 2);
     if (!positiveMoney(data.monthlyIncome)) return error('monthlyIncome', 'Informe uma renda mensal válida, maior que zero.', 2);
-    if (!positiveMoney(data.energyBillValue)) return error('energyBillValue', 'Informe o valor da conta de energia, maior que zero.', 2);
     if (!['own', 'rented'].includes(data.propertyType)) return error('propertyType', 'Selecione o tipo de imóvel.', 2);
     if (!['true', 'false'].includes(data.hasDownPayment)) return error('hasDownPayment', 'Informe se possui valor de entrada.', 2);
     if (data.hasDownPayment === 'true' && !positiveMoney(data.downPaymentValue)) {
