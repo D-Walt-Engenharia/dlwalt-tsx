@@ -2,10 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const api = axios.create({
-    baseURL:
-        process.env.NODE_ENV === "development"
-            ? "https://api.dwalt.net/api"
-            : "https://api.dwalt.net/api",
+    // Allows a local/staging API for tests without sending applications to production.
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.dwalt.net/api",
     headers: {
         "Content-Type": "application/json",
     },
