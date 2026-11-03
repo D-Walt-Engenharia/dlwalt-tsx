@@ -36,8 +36,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let scripts: any[] = [];
-  const primaryApi = process.env.NODE_ENV === "development" ? "http://localhost:3000/api" : "https://api.dwalt.net/api";
-  const fallbackApi = "https://api.dwalt.net/api";
+  const configuredApi = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+  const primaryApi = configuredApi || (process.env.NODE_ENV === "development" ? "http://localhost:3000/api" : "https://api.dwalt.net/api");
+  // With an explicit test/staging URL, never fall back to production scripts.
+  const fallbackApi = configuredApi || "https://api.dwalt.net/api";
 
   try {
     let res = await fetch(`${primaryApi}/scripts`, {
