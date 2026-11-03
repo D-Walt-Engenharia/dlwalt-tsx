@@ -7,10 +7,11 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { PiggyBank, Briefcase, MapPin, User, Phone, Calendar, FileText, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from 'lucide-react';
 import { InputMask } from "@react-input/mask";
-import { InputNumberFormat, unformat } from "@react-input/number-format";
 import api from "@/lib/api";
-import { getFinancingReceipt, validateFinancingForm, type FinancingFormData } from '@/lib/financing';
+import { formatMoneyBRL, moneyDraftToApiValue, sanitizeMoneyDraft, getFinancingReceipt, validateFinancingForm, type FinancingFormData } from '@/lib/financing';
 import { trackFinancingRegistration } from '@/lib/financing-tracking';
+import { COMPANY_INFO } from '@/lib/data/company';
+import { trackContact } from '@/lib/tracking';
 
 type FinancingStep = 1 | 2 | 3;
 type ValidationError = ReturnType<typeof validateFinancingForm>;
@@ -18,11 +19,8 @@ type ValidationError = ReturnType<typeof validateFinancingForm>;
 const INITIAL_FORM_DATA: FinancingFormData = {
     fullName: '',
     cpf: '',
-    rg: '',
     birthDate: '',
     phone: '',
-    motherName: '',
-    profession: '',
     propertyType: 'own',
     hasDownPayment: 'false',
     downPaymentValue: '0',
@@ -38,6 +36,52 @@ const INITIAL_FORM_DATA: FinancingFormData = {
 function FieldError({ field, error }: { field: keyof FinancingFormData; error: ValidationError }) {
     if (!error || error.field !== field) return null;
     return <p id={`${field}-error`} className="text-sm text-red-300">{error.message}</p>;
+}
+
+/** The visible prefix stays outside the editable input: typing and deleting are native. */
+function MoneyInput({ name, label, value, onValueChange, error }: {
+    name: 'energyBillValue' | 'monthlyIncome' | 'downPaymentValue';
+    label: string;
+    value: string;
+    onValueChange: (value: string) => void;
+    error: ValidationError;
+}) {
+    const [editing, setEditing] = useState(false);
+    const formatted = value ? formatMoneyBRL(value) : '';
+    const numberPart = formatted.replace(/^R\$\s*/, '');
+    const helpId = `${name}-preview`;
+    return (
+        <div className="space-y-2">
+            <label htmlFor={name} className="text-sm font-medium text-gray-300">{label}</label>
+            <FieldError field={name} error={error} />
+            <div className="relative">
+                <span aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-gray-300">R$</span>
+                <input
+                    id={name}
+                    name={name}
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    enterKeyHint="next"
+                    spellCheck={false}
+                    value={editing ? value : numberPart}
+                    onFocus={() => setEditing(true)}
+                    onBlur={() => setEditing(false)}
+                    onChange={event => onValueChange(sanitizeMoneyDraft(event.currentTarget.value))}
+                    aria-invalid={error?.field === name || undefined}
+                    aria-describedby={[error?.field === name ? `${name}-error` : null, editing && value ? helpId : null].filter(Boolean).join(' ') || undefined}
+                    placeholder="0,00"
+                    required
+                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-14 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
+                />
+            </div>
+            {editing && value && (
+                <p id={helpId} className="text-xs text-[#98e9b5]" aria-live="polite">
+                    Valor informado: {formatted}
+                </p>
+            )}
+        </div>
+    );
 }
 
 export default function FinancingSimulatorPage() {
@@ -99,9 +143,9 @@ export default function FinancingSimulatorPage() {
 
     const getPayload = (): FinancingFormData => ({
         ...formDataState,
-        monthlyIncome: unformat(monthlyIncome, 'pt-BR') || '0',
-        downPaymentValue: temEntrada === 'true' ? unformat(downPaymentValue, 'pt-BR') || '0' : '0',
-        energyBillValue: unformat(energyBillValue, 'pt-BR') || '0',
+        monthlyIncome: moneyDraftToApiValue(monthlyIncome),
+        downPaymentValue: temEntrada === 'true' ? moneyDraftToApiValue(downPaymentValue) : '0',
+        energyBillValue: moneyDraftToApiValue(energyBillValue),
         hasDownPayment: temEntrada,
     });
 
@@ -274,17 +318,20 @@ export default function FinancingSimulatorPage() {
 
             <main className="financing-main relative z-10 flex-grow pb-28 sm:pb-24">
                 <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-                    <div ref={panelRef} className="financing-panel rounded-[26px] border p-5 sm:p-7 md:p-10 scroll-mt-24">
+                    <div ref={panelRef} className="financing-panel rounded-[26px] border p-5 sm:p-7 md:p-10 scroll-mt-36 sm:scroll-mt-40">
                         {isSubmitted ? (
                             <section aria-labelledby="financing-success-heading" className="financing-status-enter mx-auto max-w-lg space-y-6 py-6 sm:py-10 text-center">
                                 <div className="financing-success-mark mx-auto flex h-20 w-20 items-center justify-center rounded-full">
                                     <CheckCircle2 aria-hidden="true" className="h-10 w-10 text-[#66eb99]" strokeWidth={1.8} />
                                 </div>
                                 <h2 id="financing-success-heading" ref={successHeadingRef} tabIndex={-1} className="text-[1.65rem] sm:text-3xl font-extrabold leading-tight tracking-tight text-white outline-none">
-                                    Seus dados foram enviados para análise!
+                                    Solicitação enviada com sucesso!
                                 </h2>
+                                <p className="text-sm sm:text-base text-gray-200 leading-relaxed">
+                                    Seus dados foram recebidos pela DWalt Energia.
+                                </p>
                                 <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-                                    Você receberá o resultado da sua simulação pelo WhatsApp informado.
+                                    Agora é só aguardar! Você receberá o resultado da sua simulação de financiamento no seu WhatsApp.
                                 </p>
                                 {registrationId && (
                                     <div className="rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-4 space-y-1.5 text-left">
@@ -296,18 +343,21 @@ export default function FinancingSimulatorPage() {
                                     O envio não garante aprovação. Financiamento, taxas, prazos e parcelas estão sujeitos à análise e às condições da instituição financeira.
                                 </p>
                                 <Link href="/" className="financing-primary inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-bold text-black">
-                                    Voltar ao início <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                                    Concluir <ArrowRight aria-hidden="true" className="h-4 w-4" />
                                 </Link>
                             </section>
                         ) : isLoading ? (
                             <section role="status" aria-live="polite" aria-atomic="true" aria-labelledby="financing-loading-heading" className="financing-status-enter mx-auto max-w-md py-10 sm:py-14 text-center">
-                                <div className="financing-send-visual mx-auto mb-8" aria-hidden="true">
-                                    <div className="financing-send-halo" />
-                                    <div className="financing-send-ring" />
-                                    <div className="financing-send-core"><Send className="h-8 w-8 text-[#72f0a2]" strokeWidth={1.7} /></div>
+                                <div className="financing-solar-loader mx-auto mb-8" aria-hidden="true">
+                                    <div className="financing-solar-frame">
+                                        {Array.from({ length: 12 }, (_, cell) => (
+                                            <span key={cell} className="financing-solar-cell" style={{ animationDelay: `${cell * 115}ms` }} />
+                                        ))}
+                                    </div>
+                                    <div className="financing-solar-support" />
                                 </div>
                                 <h2 id="financing-loading-heading" ref={loadingHeadingRef} tabIndex={-1} className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-white outline-none">
-                                    Enviando seus dados para análise
+                                    Enviando seus dados para análise…
                                 </h2>
                                 <p className="mt-4 text-sm sm:text-base text-gray-300 leading-relaxed">
                                     Aguarde a confirmação do envio. Mantenha esta página aberta.
@@ -318,7 +368,7 @@ export default function FinancingSimulatorPage() {
                         ) : (
                             <>
                                 <ol aria-label="Etapas do cadastro" className="grid grid-cols-3 gap-3 mb-4">
-                                    {['Seus dados', 'Renda e projeto', 'Endereço'].map((label, index) => {
+                                    {['Conta e dados', 'Renda e imóvel', 'Endereço'].map((label, index) => {
                                         const number = index + 1;
                                         return (
                                             <li key={label} aria-current={step === number ? 'step' : undefined} className={`flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 border-t-2 pt-2.5 text-[11px] sm:text-xs ${step >= number ? 'border-[#58e692] text-[#70eea1]' : 'border-white/10 text-gray-500'}`}>
@@ -349,9 +399,18 @@ export default function FinancingSimulatorPage() {
                             {step === 1 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
                                     <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
-                                        <User className="w-5 h-5 text-[#65e994]" /> Dados pessoais
+                                        <User className="w-5 h-5 text-[#65e994]" /> Dados para sua simulação
                                     </h3>
                                     <div className="grid md:grid-cols-2 gap-5">
+                                        <div className="md:col-span-2">
+                                            <MoneyInput
+                                                name="energyBillValue"
+                                                label="Valor da Conta de Energia"
+                                                value={energyBillValue}
+                                                error={validationError}
+                                                onValueChange={value => { clearFieldError('energyBillValue'); setEnergyBillValue(value); }}
+                                            />
+                                        </div>
                                         <div className="md:col-span-2 space-y-2">
                                             <label htmlFor="fullName" className="text-sm font-medium text-gray-300">Nome completo</label>
                                             <FieldError field="fullName" error={validationError} />
@@ -387,24 +446,6 @@ export default function FinancingSimulatorPage() {
                                                     className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
                                                     required
                                                     placeholder="000.000.000-00"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="rg" className="text-sm font-medium text-gray-300">RG</label>
-                                            <FieldError field="rg" error={validationError} />
-                                            <div className="relative">
-                                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                                <input
-                                                    name="rg"
-                                                    {...fieldAccessibility('rg')}
-                                                    autoComplete="off"
-                                                    value={formDataState.rg}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="Seu RG"
                                                 />
                                             </div>
                                         </div>
@@ -455,21 +496,6 @@ export default function FinancingSimulatorPage() {
                                                 Use o WhatsApp em que deseja receber o resultado da simulação.
                                             </p>
                                         </div>
-
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label htmlFor="motherName" className="text-sm font-medium text-gray-300">Nome completo da mãe</label>
-                                            <FieldError field="motherName" error={validationError} />
-                                            <input
-                                                name="motherName"
-                                                {...fieldAccessibility('motherName')}
-                                                autoComplete="off"
-                                                value={formDataState.motherName}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Nome completo da mãe"
-                                            />
-                                        </div>
                                     </div>
 
                                     <div className="pt-4">
@@ -491,62 +517,13 @@ export default function FinancingSimulatorPage() {
                                         <Briefcase className="w-5 h-5 text-[#65e994]" /> Renda e projeto solar
                                     </h3>
                                     <div className="grid md:grid-cols-2 gap-5">
-                                        <div className="space-y-2">
-                                            <label htmlFor="profession" className="text-sm font-medium text-gray-300">Profissão</label>
-                                            <FieldError field="profession" error={validationError} />
-                                            <input
-                                                name="profession"
-                                                {...fieldAccessibility('profession')}
-                                                autoComplete="organization-title"
-                                                value={formDataState.profession}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Sua profissão"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="monthlyIncome" className="text-sm font-medium text-gray-300">Renda mensal</label>
-                                            <FieldError field="monthlyIncome" error={validationError} />
-                                            <InputNumberFormat
-                                                locales="pt-BR"
-                                                format="currency"
-                                                currency="BRL"
-                                                name="monthlyIncome"
-                                                {...fieldAccessibility('monthlyIncome')}
-                                                inputMode="decimal"
-                                                value={monthlyIncome}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="R$ 0,00"
-                                                onChange={(e) => {
-                                                    clearFieldError('monthlyIncome');
-                                                    setMonthlyIncome(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="energyBillValue" className="text-sm font-medium text-gray-300">Valor médio mensal da conta de energia</label>
-                                            <FieldError field="energyBillValue" error={validationError} />
-                                            <InputNumberFormat
-                                                locales="pt-BR"
-                                                format="currency"
-                                                currency="BRL"
-                                                name="energyBillValue"
-                                                {...fieldAccessibility('energyBillValue')}
-                                                inputMode="decimal"
-                                                value={energyBillValue}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="R$ 0,00"
-                                                onChange={(e) => {
-                                                    clearFieldError('energyBillValue');
-                                                    setEnergyBillValue(e.target.value);
-                                                }}
-                                            />
-                                        </div>
+                                        <MoneyInput
+                                            name="monthlyIncome"
+                                            label="Renda mensal"
+                                            value={monthlyIncome}
+                                            error={validationError}
+                                            onValueChange={value => { clearFieldError('monthlyIncome'); setMonthlyIncome(value); }}
+                                        />
 
                                         <div className="space-y-2">
                                             <label htmlFor="propertyType" className="text-sm font-medium text-gray-300">Imóvel onde será instalado o projeto</label>
@@ -583,26 +560,13 @@ export default function FinancingSimulatorPage() {
                                         </div>
 
                                         {temEntrada === "true" && (
-                                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                <label htmlFor="downPaymentValue" className="text-sm font-medium text-gray-300">Valor da entrada</label>
-                                                <FieldError field="downPaymentValue" error={validationError} />
-                                                <InputNumberFormat
-                                                    locales="pt-BR"
-                                                    format="currency"
-                                                    currency="BRL"
-                                                    name="downPaymentValue"
-                                                    {...fieldAccessibility('downPaymentValue')}
-                                                    inputMode="decimal"
-                                                    value={downPaymentValue}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="R$ 0,00"
-                                                    onChange={(e) => {
-                                                        clearFieldError('downPaymentValue');
-                                                        setDownPaymentValue(e.target.value);
-                                                    }}
-                                                />
-                                            </div>
+                                            <MoneyInput
+                                                name="downPaymentValue"
+                                                label="Valor da entrada"
+                                                value={downPaymentValue}
+                                                error={validationError}
+                                                onValueChange={value => { clearFieldError('downPaymentValue'); setDownPaymentValue(value); }}
+                                            />
                                         )}
                                     </div>
 
@@ -750,6 +714,19 @@ export default function FinancingSimulatorPage() {
 
                             </fieldset>
                         </form>
+                        <p className="mt-7 pt-5 border-t border-white/10 text-center text-sm text-gray-400">
+                            Precisa de ajuda para preencher?{' '}
+                            <a
+                                href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => trackContact('financing_whatsapp')}
+                                className="inline-flex items-center justify-center gap-1.5 text-[#74ef9f] font-semibold underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#74ef9f]"
+                            >
+                                <MessageCircle aria-hidden="true" className="w-4 h-4" />
+                                Fale com um especialista pelo WhatsApp
+                            </a>
+                        </p>
                             </>
                         )}
                     </div>
@@ -831,23 +808,27 @@ export default function FinancingSimulatorPage() {
                     background: radial-gradient(circle, rgba(67,187,113,.19), rgba(67,187,113,.035));
                     box-shadow: 0 0 40px rgba(57,195,115,.08);
                 }
-                .financing-send-visual { position: relative; width: 108px; height: 108px; }
-                .financing-send-halo {
-                    position: absolute; inset: -16px; border-radius: 50%;
-                    background: radial-gradient(circle, rgba(76,225,137,.14), transparent 70%);
-                    animation: financing-breathe 2.4s ease-in-out infinite;
+                .financing-solar-loader { width: min(226px, 70vw); padding-top: 13px; }
+                .financing-solar-frame {
+                    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+                    grid-template-rows: repeat(3, 35px); gap: 5px; padding: 7px;
+                    border: 2px solid #5c9d7a; border-radius: 8px;
+                    background: linear-gradient(150deg, #182522, #070d0b);
+                    box-shadow: 0 0 32px rgba(43,224,116,.13), inset 0 1px 0 rgba(255,255,255,.1);
+                    transform: perspective(430px) rotateX(11deg);
                 }
-                .financing-send-ring {
-                    position: absolute; inset: 0; border-radius: 50%;
-                    border: 1.5px solid rgba(99,230,151,.13);
-                    border-top-color: #7befa7; border-right-color: rgba(99,230,151,.5);
-                    animation: financing-orbit 1.8s linear infinite;
+                .financing-solar-cell {
+                    border-radius: 3px; border: 1px solid rgba(125,232,173,.32);
+                    background: #123027;
+                    animation: financing-solar-charge 2.35s ease-in-out infinite;
                 }
-                .financing-send-core {
-                    position: absolute; inset: 13px; display: flex; align-items: center; justify-content: center;
-                    border-radius: 50%; border: 1px solid rgba(99,230,151,.2);
-                    background: linear-gradient(145deg, #163524, #0e1c15);
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+                .financing-solar-support {
+                    height: 22px; width: 2px; margin: 0 auto;
+                    background: linear-gradient(#83dfac, #355d46);
+                }
+                .financing-solar-support::after {
+                    content: ''; display: block; position: relative; top: 20px; left: -34px;
+                    width: 70px; height: 2px; border-radius: 2px; background: #487b5d;
                 }
                 .financing-send-track {
                     position: relative; height: 3px; border-radius: 99px; overflow: hidden;
@@ -859,8 +840,11 @@ export default function FinancingSimulatorPage() {
                     animation: financing-transmit 1.7s ease-in-out infinite;
                 }
                 .financing-status-enter { animation: financing-appear .26s ease-out both; }
-                @keyframes financing-orbit { to { transform: rotate(360deg); } }
-                @keyframes financing-breathe { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+                @keyframes financing-solar-charge {
+                    0%, 7%, 99% { background: #123027; box-shadow: none; }
+                    16%, 65% { background: #59e994; box-shadow: inset 0 0 12px rgba(255,255,255,.25), 0 0 12px rgba(74,241,148,.32); }
+                    86% { background: #245743; box-shadow: none; }
+                }
                 @keyframes financing-transmit { from { transform: translateX(-110%); } to { transform: translateX(390%); } }
                 @keyframes financing-appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
                 @media (min-width: 640px) {
@@ -871,8 +855,9 @@ export default function FinancingSimulatorPage() {
                     .financing-step-title { font-size: 1.45rem; }
                 }
                 @media (prefers-reduced-motion: reduce) {
-                    .financing-send-halo, .financing-send-ring, .financing-send-track span,
+                    .financing-solar-cell, .financing-send-track span,
                     .financing-status-enter, .financing-panel :global(.animate-in) { animation: none; }
+                    .financing-solar-cell { background: #3fbd7b; }
                     .financing-send-track span { left: 29%; width: 42%; transform: none; opacity: .8; }
                     .financing-panel :global(.financing-primary), .financing-secondary,
                     .financing-panel :global(input), .financing-panel :global(select) { transition: none; }
