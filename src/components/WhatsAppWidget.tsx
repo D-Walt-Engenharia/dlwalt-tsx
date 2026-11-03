@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send } from "lucide-react";
 import { Button } from "./ui/button";
@@ -8,15 +9,20 @@ import { COMPANY_INFO } from "@/lib/data/company";
 import { trackContact } from "@/lib/tracking";
 
 export function WhatsAppWidget() {
+    const pathname = usePathname();
+    // The form has its own inline WhatsApp support link. Never overlay the
+    // financing fields or action buttons, including when a mobile keyboard opens.
+    const isFinancingForm = pathname === '/simular-financiamento' || pathname?.startsWith('/simular-financiamento/');
     const [isOpen, setIsOpen] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
 
     useEffect(() => {
+        if (isFinancingForm) return;
         const timer = setTimeout(() => {
             if (!isOpen) setShowTooltip(true);
         }, 5000);
         return () => clearTimeout(timer);
-    }, [isOpen]);
+    }, [isOpen, isFinancingForm]);
 
     const handleOpenChat = () => {
         const nextState = !isOpen;
@@ -28,6 +34,8 @@ export function WhatsAppWidget() {
         trackContact("widget_whatsapp");
         window.open(`https://wa.me/${COMPANY_INFO.contact.whatsapp}`, "_blank");
     };
+
+    if (isFinancingForm) return null;
 
     return (
         <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end">
