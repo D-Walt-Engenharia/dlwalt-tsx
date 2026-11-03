@@ -1,883 +1,131 @@
-'use client';
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { Services } from "@/components/Services";
+import { About } from "@/components/About";
+import { Projects } from "@/components/Projects";
+import { Testimonials } from "@/components/Testimonials";
+import { FAQ } from "@/components/FAQ";
+import { AppShowcase } from "@/components/AppShowcase";
+import { AffiliateSection } from "@/components/AffiliateSection";
+import { Contact } from "@/components/Contact";
+import { Footer } from "@/components/Footer";
+import { JsonLd } from "@/components/JsonLd";
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { PiggyBank, Briefcase, MapPin, User, Phone, Calendar, FileText, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from 'lucide-react';
-import { InputMask } from "@react-input/mask";
-import { InputNumberFormat, unformat } from "@react-input/number-format";
-import api from "@/lib/api";
-import { getFinancingReceipt, validateFinancingForm, type FinancingFormData } from '@/lib/financing';
-import { trackFinancingRegistration } from '@/lib/financing-tracking';
+import { COMPANY_INFO } from "@/lib/data/company";
+import { TESTIMONIALS } from "@/lib/constants/testimonials";
 
-type FinancingStep = 1 | 2 | 3;
-type ValidationError = ReturnType<typeof validateFinancingForm>;
-
-const INITIAL_FORM_DATA: FinancingFormData = {
-    fullName: '',
-    cpf: '',
-    rg: '',
-    birthDate: '',
-    phone: '',
-    motherName: '',
-    profession: '',
-    propertyType: 'own',
-    hasDownPayment: 'false',
-    downPaymentValue: '0',
-    monthlyIncome: '0',
-    energyBillValue: '0',
-    zipcode: '',
-    street: '',
-    houseNumber: '',
-    city: '',
-    state: ''
-};
-
-function FieldError({ field, error }: { field: keyof FinancingFormData; error: ValidationError }) {
-    if (!error || error.field !== field) return null;
-    return <p id={`${field}-error`} className="text-sm text-red-300">{error.message}</p>;
-}
-
-export default function FinancingSimulatorPage() {
-    const [step, setStep] = useState<FinancingStep>(1);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [registrationId, setRegistrationId] = useState<string | null>(null);
-    const [submitError, setSubmitError] = useState<string | null>(null);
-    const [validationError, setValidationError] = useState<ValidationError>(null);
-    const [cepMessage, setCepMessage] = useState('');
-    const [isLookingUpCep, setIsLookingUpCep] = useState(false);
-    const [temEntrada, setTemEntrada] = useState("false");
-    const [monthlyIncome, setMonthlyIncome] = useState('');
-    const [downPaymentValue, setDownPaymentValue] = useState('');
-    const [energyBillValue, setEnergyBillValue] = useState('');
-    const [formDataState, setFormDataState] = useState<FinancingFormData>(INITIAL_FORM_DATA);
-    const submittingRef = useRef(false);
-    const cepRequestRef = useRef(0);
-    const cepAbortRef = useRef<AbortController | null>(null);
-    const focusPendingRef = useRef(false);
-    const panelRef = useRef<HTMLDivElement>(null);
-    const stepHeadingRef = useRef<HTMLHeadingElement>(null);
-    const successHeadingRef = useRef<HTMLHeadingElement>(null);
-    const loadingHeadingRef = useRef<HTMLHeadingElement>(null);
-    const submitErrorRef = useRef<HTMLDivElement>(null);
-
-    // Focus the current step or its first error only after an intentional action.
-    useEffect(() => {
-        if (!focusPendingRef.current) return;
-        focusPendingRef.current = false;
-        const target = isSubmitted
-            ? successHeadingRef.current
-            : isLoading
-                ? loadingHeadingRef.current
-                : validationError
-                    ? document.getElementById(validationError.field)
-                    : submitError
-                        ? submitErrorRef.current
-                        : stepHeadingRef.current;
-        target?.focus({ preventScroll: true });
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        panelRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-    }, [step, validationError, submitError, isSubmitted, isLoading]);
-
-    useEffect(() => () => cepAbortRef.current?.abort(), []);
-
-    const clearFieldError = (field: keyof FinancingFormData) => {
-        setValidationError(current => current?.field === field ? null : current);
-    };
-
-    const fieldAccessibility = (field: keyof FinancingFormData) => ({
-        id: field,
-        'aria-invalid': validationError?.field === field || undefined,
-        'aria-describedby': [
-            validationError?.field === field ? `${field}-error` : null,
-            field === 'phone' ? 'phone-help' : null,
-        ].filter(Boolean).join(' ') || undefined,
-    });
-
-    const getPayload = (): FinancingFormData => ({
-        ...formDataState,
-        monthlyIncome: unformat(monthlyIncome, 'pt-BR') || '0',
-        downPaymentValue: temEntrada === 'true' ? unformat(downPaymentValue, 'pt-BR') || '0' : '0',
-        energyBillValue: unformat(energyBillValue, 'pt-BR') || '0',
-        hasDownPayment: temEntrada,
-    });
-
-    const showValidationError = (error: NonNullable<ValidationError>) => {
-        focusPendingRef.current = true;
-        setValidationError(error);
-        setStep(error.step);
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        clearFieldError(name as keyof FinancingFormData);
-        setFormDataState(prev => ({ ...prev, [name]: name === 'state' ? value.toUpperCase() : value }));
-    };
-
-    const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cepRaw = e.target.value;
-        const cep = cepRaw.replace(/\D/g, "");
-        const cepChanged = cep !== formDataState.zipcode.replace(/\D/g, '');
-        const requestId = ++cepRequestRef.current;
-        // A new CEP invalidates its dependent address, even if the lookup fails.
-        // Use the cleared values as the baseline so subsequent manual edits win.
-        const previousAddress = {
-            street: cepChanged ? '' : formDataState.street,
-            city: cepChanged ? '' : formDataState.city,
-            state: cepChanged ? '' : formDataState.state,
-        };
-        cepAbortRef.current?.abort();
-        clearFieldError('zipcode');
-        setCepMessage(cepChanged ? 'Ao alterar o CEP, preencha ou confira o novo endereço.' : '');
-        setIsLookingUpCep(false);
-        setFormDataState(prev => ({
-            ...prev,
-            zipcode: cepRaw,
-            ...(cepChanged ? { street: '', city: '', state: '' } : {}),
-        }));
-        if (cep.length !== 8) return;
-
-        const controller = new AbortController();
-        cepAbortRef.current = controller;
-        setIsLookingUpCep(true);
-        try {
-            const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`, { signal: controller.signal });
-            if (!res.ok) throw new Error('CEP lookup failed');
-            const body: unknown = await res.json();
-            if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('Invalid CEP response');
-            const data = body as Record<string, unknown>;
-            if (requestId !== cepRequestRef.current) return;
-            if (data.erro) {
-                setCepMessage('CEP não encontrado. Confira os números e preencha o endereço abaixo.');
-                return;
+export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LocalBusiness",
+        "name": COMPANY_INFO.name,
+        "image": "https://www.dwalt.net/logo-branca.svg",
+        "description": COMPANY_INFO.description,
+        "telephone": COMPANY_INFO.contact.whatsapp,
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Ariquemes", // Main unit
+          "addressRegion": "RO",
+          "addressCountry": "BR",
+          "streetAddress": COMPANY_INFO.units[0].address
+        },
+        "url": "https://www.dwalt.net",
+        "priceRange": "$$$",
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "opens": "08:00",
+          "closes": "18:00"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": TESTIMONIALS.length.toString()
+        },
+        "review": TESTIMONIALS.map(t => ({
+          "@type": "Review",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": t.stars,
+            "bestRating": "5"
+          },
+          "author": {
+            "@type": "Person",
+            "name": t.name
+          },
+          "reviewBody": t.testimonial
+        }))
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Como funciona a energia solar à noite?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "À noite, seus painéis não geram energia. No entanto, se você estiver conectado à rede elétrica (On-Grid), você utilizará a energia da concessionária. O grande benefício é o sistema de compensação: o excedente gerado durante o dia é injetado na rede e vira créditos para abater o consumo noturno."
             }
-            setFormDataState(prev => ({
-                ...prev,
-                street: prev.street === previousAddress.street && typeof data.logradouro === 'string' ? data.logradouro : prev.street,
-                city: prev.city === previousAddress.city && typeof data.localidade === 'string' ? data.localidade : prev.city,
-                state: prev.state === previousAddress.state && typeof data.uf === 'string' ? data.uf : prev.state,
-            }));
-            setCepMessage('Confira o endereço preenchido e informe o número do imóvel.');
-        } catch {
-            if (controller.signal.aborted || requestId !== cepRequestRef.current) return;
-            setCepMessage('Não foi possível consultar o CEP. Você pode preencher o endereço manualmente.');
-        } finally {
-            if (requestId === cepRequestRef.current) setIsLookingUpCep(false);
-        }
-    };
-
-    const handleNextStep = () => {
-        if (submittingRef.current || step === 3) return;
-        const error = validateFinancingForm(getPayload(), step);
-        if (error) return showValidationError(error);
-        focusPendingRef.current = true;
-        setValidationError(null);
-        setSubmitError(null);
-        setStep(step === 1 ? 2 : 3);
-    };
-
-    const handlePrevStep = () => {
-        if (submittingRef.current) return;
-        focusPendingRef.current = true;
-        setValidationError(null);
-        setSubmitError(null);
-        setStep(step === 3 ? 2 : 1);
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (submittingRef.current || isSubmitted) return;
-        if (step !== 3) {
-            handleNextStep();
-            return;
-        }
-
-        const data = getPayload();
-        const error = validateFinancingForm(data);
-        if (error) return showValidationError(error);
-
-        // A ref closes the gap before React disables the button on the next render.
-        submittingRef.current = true;
-        focusPendingRef.current = true;
-        cepAbortRef.current?.abort();
-        ++cepRequestRef.current;
-        setIsLookingUpCep(false);
-        setIsLoading(true);
-        setSubmitError(null);
-        setValidationError(null);
-
-        try {
-            const response = await api.post('/financial/credit-analysis', data, { timeout: 30000 });
-            const receipt = getFinancingReceipt(response.data);
-            if (!receipt) {
-                focusPendingRef.current = true;
-                setSubmitError('O sistema não confirmou o registro. Seus dados continuam preenchidos. Entre em contato antes de reenviar.');
-                return;
+          },
+          {
+            "@type": "Question",
+            "name": "Qual é o tempo de retorno do investimento (Payback)?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Em média, o retorno do investimento para sistemas residenciais e comerciais em Rondônia gira em torno de 2,5 a 4 anos. Considerando a vida útil do sistema de mais de 25 anos, você terá mais de duas décadas de 'lucro' com a energia gerada."
             }
-
-            focusPendingRef.current = true;
-            setRegistrationId(receipt.registrationId);
-            setIsSubmitted(true);
-            // Tracking failures must never change a confirmed registration into a form error.
-            try {
-                trackFinancingRegistration(receipt.registrationId);
-            } catch {
-                // The registration remains confirmed even if analytics is unavailable.
+          },
+          {
+            "@type": "Question",
+            "name": "Os painéis precisam de muita manutenção?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A manutenção é mínima e consiste basicamente na limpeza dos módulos para garantir a máxima eficiência. Recomendamos uma limpeza a cada 6 meses ou 1 ano, dependendo da poeira do local. O sistema em si é muito robusto e durável."
             }
-        } catch {
-            focusPendingRef.current = true;
-            setSubmitError('Não foi possível confirmar o envio. Seus dados continuam preenchidos. Entre em contato antes de reenviar para verificar se o cadastro foi recebido.');
-        } finally {
-            submittingRef.current = false;
-            setIsLoading(false);
-        }
-    };
+          },
+          {
+            "@type": "Question",
+            "name": "Como funciona o financiamento?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Trabalhamos com diversas linhas de financiamento bancário específicas para energia solar (como Santander, BV, Solfácil). Muitas vezes, é possivel trocar o valor da sua conta de luz pela parcela do financiamento, sem descapitalizar."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O que acontece em dias nublados ou chuva?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O sistema continua gerando energia, porém em menor intensidade do que em dias de sol pleno. A tecnologia fotovoltaica funciona com a radiação solar, que atravessa as nuvens. O dimensionamento do seu projeto já leva em consideração a média climática da região para garantir a geração anual esperada."
+            }
+          }
+        ]
+      }
+    ]
+  };
 
-    return (
-        <div className="financing-shell flex flex-col min-h-screen bg-black text-white">
-            <Header />
-
-            <div className="financing-hero relative w-full overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/solar-roof-sunset.jpg"
-                        alt="Casa com painéis de energia solar ao pôr do sol"
-                        fill
-                        priority
-                        sizes="100vw"
-                        className="object-cover object-center"
-                    />
-                    <div className="financing-hero-shade absolute inset-0" />
-                </div>
-
-                <div className="container relative z-10 mx-auto px-5 sm:px-6 max-w-4xl">
-                    <div className="text-left max-w-2xl">
-                        <div className="financing-badge inline-flex items-center gap-2 rounded-full border px-3.5 py-2 font-semibold backdrop-blur-md">
-                            <PiggyBank aria-hidden="true" className="w-4 h-4" />
-                            Simulação de financiamento
-                        </div>
-
-                        <h1 className="financing-title mt-4 text-white">
-                            <span className="block">Simule o financiamento</span>
-                            <span className="financing-title-accent">da sua energia solar</span>
-                        </h1>
-
-                        <p className="financing-intro mt-4 max-w-xl">
-                            Preencha seus dados para solicitar a análise e receber uma simulação de financiamento do seu projeto solar pelo WhatsApp.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <main className="financing-main relative z-10 flex-grow pb-28 sm:pb-24">
-                <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-                    <div ref={panelRef} className="financing-panel rounded-[26px] border p-5 sm:p-7 md:p-10 scroll-mt-24">
-                        {isSubmitted ? (
-                            <section aria-labelledby="financing-success-heading" className="financing-status-enter mx-auto max-w-lg space-y-6 py-6 sm:py-10 text-center">
-                                <div className="financing-success-mark mx-auto flex h-20 w-20 items-center justify-center rounded-full">
-                                    <CheckCircle2 aria-hidden="true" className="h-10 w-10 text-[#66eb99]" strokeWidth={1.8} />
-                                </div>
-                                <h2 id="financing-success-heading" ref={successHeadingRef} tabIndex={-1} className="text-[1.65rem] sm:text-3xl font-extrabold leading-tight tracking-tight text-white outline-none">
-                                    Seus dados foram enviados para análise!
-                                </h2>
-                                <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
-                                    Você receberá o resultado da sua simulação pelo WhatsApp informado.
-                                </p>
-                                {registrationId && (
-                                    <div className="rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-4 space-y-1.5 text-left">
-                                        <p className="text-xs font-medium text-gray-400">Protocolo do cadastro</p>
-                                        <p className="break-all font-mono text-sm text-white">{registrationId}</p>
-                                    </div>
-                                )}
-                                <p className="text-xs text-gray-400 leading-relaxed">
-                                    O envio não garante aprovação. Financiamento, taxas, prazos e parcelas estão sujeitos à análise e às condições da instituição financeira.
-                                </p>
-                                <Link href="/" className="financing-primary inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-bold text-black">
-                                    Voltar ao início <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                                </Link>
-                            </section>
-                        ) : isLoading ? (
-                            <section role="status" aria-live="polite" aria-atomic="true" aria-labelledby="financing-loading-heading" className="financing-status-enter mx-auto max-w-md py-10 sm:py-14 text-center">
-                                <div className="financing-send-visual mx-auto mb-8" aria-hidden="true">
-                                    <div className="financing-send-halo" />
-                                    <div className="financing-send-ring" />
-                                    <div className="financing-send-core"><Send className="h-8 w-8 text-[#72f0a2]" strokeWidth={1.7} /></div>
-                                </div>
-                                <h2 id="financing-loading-heading" ref={loadingHeadingRef} tabIndex={-1} className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-white outline-none">
-                                    Enviando seus dados para análise
-                                </h2>
-                                <p className="mt-4 text-sm sm:text-base text-gray-300 leading-relaxed">
-                                    Aguarde a confirmação do envio. Mantenha esta página aberta.
-                                </p>
-                                <div className="financing-send-track mt-7" aria-hidden="true"><span /></div>
-                                <p className="mt-4 text-xs text-gray-500">Seu cadastro está sendo enviado.</p>
-                            </section>
-                        ) : (
-                            <>
-                                <ol aria-label="Etapas do cadastro" className="grid grid-cols-3 gap-3 mb-4">
-                                    {['Seus dados', 'Renda e projeto', 'Endereço'].map((label, index) => {
-                                        const number = index + 1;
-                                        return (
-                                            <li key={label} aria-current={step === number ? 'step' : undefined} className={`flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 border-t-2 pt-2.5 text-[11px] sm:text-xs ${step >= number ? 'border-[#58e692] text-[#70eea1]' : 'border-white/10 text-gray-500'}`}>
-                                                <span className="font-bold">0{number}</span>
-                                                <span>{label}</span>
-                                            </li>
-                                        );
-                                    })}
-                                </ol>
-                                <p id="financing-purpose" className="text-xs text-gray-400 leading-relaxed mb-6">
-                                    Etapa {step} de 3 · Preencha os dados para solicitar sua simulação.
-                                </p>
-                                {submitError && (
-                                    <div ref={submitErrorRef} role="alert" tabIndex={-1} className="flex items-start gap-3 rounded-xl border border-red-400/30 bg-red-500/10 p-4 mb-6 text-sm text-red-200 outline-none">
-                                        <AlertCircle aria-hidden="true" className="h-5 w-5 shrink-0 mt-0.5" />
-                                        <div className="space-y-2">
-                                            <p>{submitError}</p>
-                                            <Link href="/#contact" target="_blank" rel="noopener noreferrer" className="inline-block font-medium underline underline-offset-2 hover:text-white">
-                                                Falar com a DWalt
-                                            </Link>
-                                        </div>
-                                    </div>
-                                )}
-                        <form onSubmit={handleSubmit} noValidate aria-busy={isLoading} aria-describedby="financing-purpose" className="space-y-8">
-                            <fieldset disabled={isLoading} className="space-y-8 min-w-0">
-
-                            {/* STEP 1: DADOS PESSOAIS */}
-                            {step === 1 && (
-                                <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
-                                        <User className="w-5 h-5 text-[#65e994]" /> Dados pessoais
-                                    </h3>
-                                    <div className="grid md:grid-cols-2 gap-5">
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label htmlFor="fullName" className="text-sm font-medium text-gray-300">Nome completo</label>
-                                            <FieldError field="fullName" error={validationError} />
-                                            <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                                <input
-                                                    name="fullName"
-                                                    {...fieldAccessibility('fullName')}
-                                                    autoComplete="name"
-                                                    value={formDataState.fullName}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="Seu nome completo"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="cpf" className="text-sm font-medium text-gray-300">CPF</label>
-                                            <FieldError field="cpf" error={validationError} />
-                                            <div className="relative">
-                                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                                <InputMask
-                                                    mask="___.___.___-__"
-                                                    replacement={{ _: /\d/ }}
-                                                    name="cpf"
-                                                    {...fieldAccessibility('cpf')}
-                                                    inputMode="numeric"
-                                                    autoComplete="off"
-                                                    value={formDataState.cpf}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="000.000.000-00"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="rg" className="text-sm font-medium text-gray-300">RG</label>
-                                            <FieldError field="rg" error={validationError} />
-                                            <div className="relative">
-                                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                                <input
-                                                    name="rg"
-                                                    {...fieldAccessibility('rg')}
-                                                    autoComplete="off"
-                                                    value={formDataState.rg}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="Seu RG"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="birthDate" className="text-sm font-medium text-gray-300">Data de nascimento</label>
-                                            <FieldError field="birthDate" error={validationError} />
-                                            <div className="relative">
-                                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
-                                                <InputMask
-                                                    mask="__/__/____"
-                                                    replacement={{ _: /\d/ }}
-                                                    name="birthDate"
-                                                    {...fieldAccessibility('birthDate')}
-                                                    inputMode="numeric"
-                                                    autoComplete="bday"
-                                                    value={formDataState.birthDate}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="dd/mm/aaaa"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="phone" className="text-sm font-medium text-gray-300">Telefone / WhatsApp</label>
-                                            <FieldError field="phone" error={validationError} />
-                                            <div className="relative">
-                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                                <InputMask
-                                                    mask="(__) _____-____"
-                                                    replacement={{ _: /\d/ }}
-                                                    name="phone"
-                                                    {...fieldAccessibility('phone')}
-                                                    type="tel"
-                                                    inputMode="tel"
-                                                    autoComplete="tel-national"
-                                                    value={formDataState.phone}
-                                                    onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="(99) 99999-9999"
-                                                />
-                                            </div>
-                                            <p id="phone-help" className="flex items-start gap-1.5 text-xs text-gray-400 leading-relaxed">
-                                                <MessageCircle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#5ddc90]" />
-                                                Use o WhatsApp em que deseja receber o resultado da simulação.
-                                            </p>
-                                        </div>
-
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label htmlFor="motherName" className="text-sm font-medium text-gray-300">Nome completo da mãe</label>
-                                            <FieldError field="motherName" error={validationError} />
-                                            <input
-                                                name="motherName"
-                                                {...fieldAccessibility('motherName')}
-                                                autoComplete="off"
-                                                value={formDataState.motherName}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Nome completo da mãe"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-4">
-                                        <button
-                                            type="submit"
-                                            className="financing-primary w-full h-14 text-black font-bold text-base rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
-                                        >
-                                            <span>Continuar</span>
-                                            <ArrowRight className="w-5 h-5 text-black stroke-[2.5]" />
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* STEP 2: DADOS FINANCEIROS */}
-                            {step === 2 && (
-                                <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
-                                        <Briefcase className="w-5 h-5 text-[#65e994]" /> Renda e projeto solar
-                                    </h3>
-                                    <div className="grid md:grid-cols-2 gap-5">
-                                        <div className="space-y-2">
-                                            <label htmlFor="profession" className="text-sm font-medium text-gray-300">Profissão</label>
-                                            <FieldError field="profession" error={validationError} />
-                                            <input
-                                                name="profession"
-                                                {...fieldAccessibility('profession')}
-                                                autoComplete="organization-title"
-                                                value={formDataState.profession}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Sua profissão"
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="monthlyIncome" className="text-sm font-medium text-gray-300">Renda mensal</label>
-                                            <FieldError field="monthlyIncome" error={validationError} />
-                                            <InputNumberFormat
-                                                locales="pt-BR"
-                                                format="currency"
-                                                currency="BRL"
-                                                name="monthlyIncome"
-                                                {...fieldAccessibility('monthlyIncome')}
-                                                inputMode="decimal"
-                                                value={monthlyIncome}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="R$ 0,00"
-                                                onChange={(e) => {
-                                                    clearFieldError('monthlyIncome');
-                                                    setMonthlyIncome(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="energyBillValue" className="text-sm font-medium text-gray-300">Valor médio mensal da conta de energia</label>
-                                            <FieldError field="energyBillValue" error={validationError} />
-                                            <InputNumberFormat
-                                                locales="pt-BR"
-                                                format="currency"
-                                                currency="BRL"
-                                                name="energyBillValue"
-                                                {...fieldAccessibility('energyBillValue')}
-                                                inputMode="decimal"
-                                                value={energyBillValue}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="R$ 0,00"
-                                                onChange={(e) => {
-                                                    clearFieldError('energyBillValue');
-                                                    setEnergyBillValue(e.target.value);
-                                                }}
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="propertyType" className="text-sm font-medium text-gray-300">Imóvel onde será instalado o projeto</label>
-                                            <FieldError field="propertyType" error={validationError} />
-                                            <select
-                                                name="propertyType"
-                                                {...fieldAccessibility('propertyType')}
-                                                value={formDataState.propertyType}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all appearance-none cursor-pointer"
-                                            >
-                                                <option value="own" className="bg-[#121417] text-white">Próprio</option>
-                                                <option value="rented" className="bg-[#121417] text-white">Alugado</option>
-                                            </select>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label htmlFor="hasDownPayment" className="text-sm font-medium text-gray-300">Pretende dar entrada?</label>
-                                            <FieldError field="hasDownPayment" error={validationError} />
-                                            <select
-                                                name="hasDownPayment"
-                                                {...fieldAccessibility('hasDownPayment')}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all appearance-none cursor-pointer"
-                                                onChange={(e) => {
-                                                    clearFieldError('hasDownPayment');
-                                                    clearFieldError('downPaymentValue');
-                                                    setTemEntrada(e.target.value);
-                                                }}
-                                                value={temEntrada}
-                                            >
-                                                <option value="false" className="bg-[#121417] text-white">Não</option>
-                                                <option value="true" className="bg-[#121417] text-white">Sim</option>
-                                            </select>
-                                        </div>
-
-                                        {temEntrada === "true" && (
-                                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                                <label htmlFor="downPaymentValue" className="text-sm font-medium text-gray-300">Valor da entrada</label>
-                                                <FieldError field="downPaymentValue" error={validationError} />
-                                                <InputNumberFormat
-                                                    locales="pt-BR"
-                                                    format="currency"
-                                                    currency="BRL"
-                                                    name="downPaymentValue"
-                                                    {...fieldAccessibility('downPaymentValue')}
-                                                    inputMode="decimal"
-                                                    value={downPaymentValue}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                    required
-                                                    placeholder="R$ 0,00"
-                                                    onChange={(e) => {
-                                                        clearFieldError('downPaymentValue');
-                                                        setDownPaymentValue(e.target.value);
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex gap-4 pt-4">
-                                        <button
-                                            type="button"
-                                            onClick={handlePrevStep}
-                                            className="financing-secondary w-1/3 h-14 text-white font-medium text-base rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
-                                        >
-                                            <ArrowLeft className="w-5 h-5" />
-                                            <span>Voltar</span>
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="financing-primary w-2/3 h-14 text-black font-bold text-base rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
-                                        >
-                                            <span>Continuar</span>
-                                            <ArrowRight className="w-5 h-5 text-black stroke-[2.5]" />
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* STEP 3: ENDEREÇO & SUBMIT */}
-                            {step === 3 && (
-                                <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
-                                        <MapPin className="w-5 h-5 text-[#65e994]" /> Endereço
-                                    </h3>
-                                    <div className="grid md:grid-cols-12 gap-5">
-                                        <div className="md:col-span-4 space-y-2">
-                                            <label htmlFor="zipcode" className="text-sm font-medium text-gray-300">CEP</label>
-                                            <FieldError field="zipcode" error={validationError} />
-                                            <InputMask
-                                                mask="_____-___"
-                                                replacement={{ _: /\d/ }}
-                                                name="zipcode"
-                                                {...fieldAccessibility('zipcode')}
-                                                inputMode="numeric"
-                                                autoComplete="postal-code"
-                                                value={formDataState.zipcode}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="00000-000"
-                                                onChange={handleCepChange}
-                                            />
-                                            <p className="text-xs text-gray-400 leading-relaxed" role="status">
-                                                {isLookingUpCep ? 'Consultando CEP…' : cepMessage}
-                                            </p>
-                                        </div>
-
-                                        <div className="md:col-span-8 space-y-2">
-                                            <label htmlFor="street" className="text-sm font-medium text-gray-300">Rua / Logradouro</label>
-                                            <FieldError field="street" error={validationError} />
-                                            <input
-                                                name="street"
-                                                {...fieldAccessibility('street')}
-                                                autoComplete="address-line1"
-                                                value={formDataState.street}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Ex: Rua das Flores"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-4 space-y-2">
-                                            <label htmlFor="houseNumber" className="text-sm font-medium text-gray-300">Número</label>
-                                            <FieldError field="houseNumber" error={validationError} />
-                                            <input
-                                                name="houseNumber"
-                                                {...fieldAccessibility('houseNumber')}
-                                                value={formDataState.houseNumber}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Número ou S/N"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-4 space-y-2">
-                                            <label htmlFor="city" className="text-sm font-medium text-gray-300">Cidade</label>
-                                            <FieldError field="city" error={validationError} />
-                                            <input
-                                                name="city"
-                                                {...fieldAccessibility('city')}
-                                                autoComplete="address-level2"
-                                                value={formDataState.city}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Ex: Ariquemes"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-4 space-y-2">
-                                            <label htmlFor="state" className="text-sm font-medium text-gray-300">Estado (UF)</label>
-                                            <FieldError field="state" error={validationError} />
-                                            <input
-                                                name="state"
-                                                {...fieldAccessibility('state')}
-                                                autoComplete="address-level1"
-                                                maxLength={2}
-                                                value={formDataState.state}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
-                                                required
-                                                placeholder="Ex: RO"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="pt-4">
-                                        <p className="text-sm text-gray-400 mb-3 leading-relaxed">
-                                            Confira seus dados antes de enviar. O financiamento está sujeito à análise e aprovação de crédito;
-                                            taxas, prazos e parcelas serão confirmados conforme as condições disponíveis.
-                                        </p>
-                                        <p className="text-xs text-gray-400 mb-5 leading-relaxed">
-                                            Ao enviar, você solicita a análise do financiamento. Consulte nossos{' '}
-                                            <Link href="/termos-de-uso" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] underline underline-offset-2 hover:text-green-300">Termos de Uso</Link>{' '}
-                                            e a{' '}
-                                            <Link href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer" className="text-[#4ade80] underline underline-offset-2 hover:text-green-300">Política de Privacidade</Link>.
-                                        </p>
-                                        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-                                            <button
-                                                type="button"
-                                                onClick={handlePrevStep}
-                                                className="financing-secondary order-2 sm:order-1 h-12 sm:h-14 text-white font-medium text-base rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
-                                            >
-                                                <ArrowLeft className="w-5 h-5" />
-                                                <span>Voltar</span>
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={isLoading}
-                                                className="financing-primary order-1 sm:order-2 h-14 text-black font-bold text-base rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                                            >
-                                                Enviar para análise
-                                                <Send aria-hidden="true" className="h-4.5 w-4.5" strokeWidth={2} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            </fieldset>
-                        </form>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </main>
-            <Footer />
-            <style jsx>{`
-                .financing-shell { background: #030605; }
-                .financing-hero { padding-top: 106px; padding-bottom: 84px; }
-                .financing-hero-shade {
-                    background:
-                        linear-gradient(180deg, rgba(0,0,0,.57) 0%, rgba(0,0,0,.12) 42%, #030605 100%),
-                        linear-gradient(90deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,.76) 46%, rgba(0,0,0,.2) 100%);
-                }
-                .financing-badge {
-                    color: #73ed9e;
-                    border-color: rgba(87, 223, 135, .36);
-                    background: rgba(13, 69, 36, .4);
-                    font-size: .73rem;
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
-                }
-                .financing-title {
-                    font-size: clamp(2.15rem, 8.9vw, 3.5rem);
-                    font-weight: 900;
-                    line-height: 1.06;
-                    letter-spacing: -.045em;
-                    text-wrap: balance;
-                }
-                .financing-title-accent {
-                    display: block;
-                    margin-top: .12em;
-                    color: #59e58b;
-                    font-size: clamp(1.8rem, 8vw, 3.4rem);
-                    line-height: 1.12;
-                    letter-spacing: -.04em;
-                }
-                .financing-intro { color: #c2c7ce; font-size: .94rem; line-height: 1.6; }
-                .financing-main { margin-top: -46px; }
-                .financing-panel {
-                    border-color: rgba(194, 220, 204, .17);
-                    background: linear-gradient(145deg, rgba(17,22,20,.98), rgba(9,12,11,.99) 50%);
-                    box-shadow: 0 22px 65px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.035);
-                }
-                .financing-step-title { font-size: 1.34rem; font-weight: 800; letter-spacing: -.025em; }
-                .financing-panel :global(label) { color: #d8dde2; font-weight: 550; }
-                .financing-panel :global(input), .financing-panel :global(select) {
-                    min-height: 54px;
-                    background: #0b0f0e;
-                    border-color: rgba(199,214,204,.17);
-                    border-radius: 13px;
-                    font-size: 16px;
-                    color: #f5f7f6;
-                    box-shadow: inset 0 1px 2px rgba(0,0,0,.2);
-                    transition: border-color .18s ease, box-shadow .18s ease;
-                }
-                .financing-panel :global(input::placeholder) { color: #7f8985; opacity: 1; }
-                .financing-panel :global(input:focus), .financing-panel :global(select:focus) {
-                    border-color: #57df8c;
-                    box-shadow: 0 0 0 3px rgba(87,223,140,.11);
-                }
-                .financing-panel :global([aria-invalid="true"]) { border-color: #f48686; }
-                .financing-panel :global(.financing-primary) {
-                    background: linear-gradient(112deg, #65e991, #4ada85);
-                    box-shadow: 0 7px 25px rgba(49,195,111,.12), inset 0 1px 0 rgba(255,255,255,.22);
-                    border: 1px solid rgba(128,247,171,.22);
-                    transition: background .18s ease, box-shadow .18s ease, transform .18s ease;
-                }
-                .financing-panel :global(.financing-primary:hover) { background: #75efa0; box-shadow: 0 7px 28px rgba(49,195,111,.22); }
-                .financing-panel :global(.financing-primary:active) { transform: translateY(1px); }
-                .financing-panel :global(.financing-primary:focus-visible), .financing-secondary:focus-visible { outline: 2px solid #8af2b0; outline-offset: 4px; }
-                .financing-secondary {
-                    border: 1px solid rgba(255,255,255,.12);
-                    background: rgba(255,255,255,.035);
-                    transition: background .18s ease;
-                }
-                .financing-secondary:hover { background: rgba(255,255,255,.08); }
-                .financing-success-mark {
-                    border: 1px solid rgba(92,231,148,.28);
-                    background: radial-gradient(circle, rgba(67,187,113,.19), rgba(67,187,113,.035));
-                    box-shadow: 0 0 40px rgba(57,195,115,.08);
-                }
-                .financing-send-visual { position: relative; width: 108px; height: 108px; }
-                .financing-send-halo {
-                    position: absolute; inset: -16px; border-radius: 50%;
-                    background: radial-gradient(circle, rgba(76,225,137,.14), transparent 70%);
-                    animation: financing-breathe 2.4s ease-in-out infinite;
-                }
-                .financing-send-ring {
-                    position: absolute; inset: 0; border-radius: 50%;
-                    border: 1.5px solid rgba(99,230,151,.13);
-                    border-top-color: #7befa7; border-right-color: rgba(99,230,151,.5);
-                    animation: financing-orbit 1.8s linear infinite;
-                }
-                .financing-send-core {
-                    position: absolute; inset: 13px; display: flex; align-items: center; justify-content: center;
-                    border-radius: 50%; border: 1px solid rgba(99,230,151,.2);
-                    background: linear-gradient(145deg, #163524, #0e1c15);
-                    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-                }
-                .financing-send-track {
-                    position: relative; height: 3px; border-radius: 99px; overflow: hidden;
-                    background: rgba(96,222,145,.1);
-                }
-                .financing-send-track span {
-                    position: absolute; inset-block: 0; left: 0; width: 35%; border-radius: inherit;
-                    background: linear-gradient(90deg, transparent, #74ef9f, transparent);
-                    animation: financing-transmit 1.7s ease-in-out infinite;
-                }
-                .financing-status-enter { animation: financing-appear .26s ease-out both; }
-                @keyframes financing-orbit { to { transform: rotate(360deg); } }
-                @keyframes financing-breathe { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
-                @keyframes financing-transmit { from { transform: translateX(-110%); } to { transform: translateX(390%); } }
-                @keyframes financing-appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-                @media (min-width: 640px) {
-                    .financing-hero { padding-top: 140px; padding-bottom: 104px; }
-                    .financing-main { margin-top: -56px; }
-                    .financing-badge { font-size: .8rem; }
-                    .financing-intro { font-size: 1.06rem; }
-                    .financing-step-title { font-size: 1.45rem; }
-                }
-                @media (prefers-reduced-motion: reduce) {
-                    .financing-send-halo, .financing-send-ring, .financing-send-track span,
-                    .financing-status-enter, .financing-panel :global(.animate-in) { animation: none; }
-                    .financing-send-track span { left: 29%; width: 42%; transform: none; opacity: .8; }
-                    .financing-panel :global(.financing-primary), .financing-secondary,
-                    .financing-panel :global(input), .financing-panel :global(select) { transition: none; }
-                }
-            `}</style>
-        </div>
-    );
+  return (
+    <main className="min-h-screen">
+      <JsonLd data={jsonLd} />
+      <Header />
+      <Hero />
+      <About />
+      <Services />
+      <Projects />
+      <Testimonials />
+      <FAQ />
+      <AppShowcase />
+      <AffiliateSection />
+      <Contact />
+      <Footer />
+    </main>
+  );
 }
