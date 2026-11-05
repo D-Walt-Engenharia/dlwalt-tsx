@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 
 export function About() {
@@ -9,16 +8,13 @@ export function About() {
                     {/* Image Content */}
                     <div className="w-full lg:w-1/2">
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                            {/* Placeholder for About Image */}
-                            <div
-                                className="aspect-[4/3] bg-cover bg-center"
-                                style={{
-                                    backgroundImage: 'url("/oldphoto.png")',
-                                }}
-                            />
+                            <picture>
+                                <source media="(max-width: 767px)" srcSet="/dwalt-equipe-640.webp" />
+                                <img src="/dwalt-equipe-960.webp" alt="História da DWalt Energia" width={960} height={720} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-cover" />
+                            </picture>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                             <div className="absolute bottom-6 left-6 text-white">
-                                <p className="text-sm font-medium uppercase tracking-wider mb-1">Desde 2015</p>
+                                <p className="text-sm font-medium uppercase tracking-wider mb-1">Nossa história em Rondônia</p>
                                 <p className="text-2xl font-bold">Líder em Energia Solar na Região Norte</p>
                             </div>
                         </div>

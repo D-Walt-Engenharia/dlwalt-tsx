@@ -5,7 +5,8 @@ import { Calendar, User, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/JsonLd';
-import api from '@/lib/api';
+import { getPublicPost as getPost } from '@/lib/public-content';
+import { ORGANIZATION_ID, pageMetadata, plainText, SITE_URL } from '@/lib/seo';
 import { Post } from '@/types';
 import { Metadata } from 'next';
 
@@ -13,17 +14,6 @@ interface Props {
     params: Promise<{
         slug: string;
     }>;
-}
-
-// Fetch data function
-async function getPost(slug: string): Promise<Post | null> {
-    try {
-        const response = await api.get(`/posts/${slug}`);
-        return response.data.data ? response.data.data : response.data;
-    } catch (error) {
-        console.error("Error fetching post:", error);
-        return null;
-    }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -37,11 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     return {
-        title: `${post.title} | DWalt Energia`,
-        description: post.excerpt || post.content.substring(0, 160),
+        ...pageMetadata(`${post.title} | DWalt Energia`, post.excerpt || post.content, `/blog/${encodeURIComponent(post.slug || slug)}`),
         openGraph: {
             title: post.title,
-            description: post.excerpt || post.content.substring(0, 160),
+            description: plainText(post.excerpt || post.content).slice(0, 170),
+            url: `${SITE_URL}/blog/${encodeURIComponent(post.slug || slug)}`,
+            type: 'article',
             images: post.thumbnailUrl ? [post.thumbnailUrl] : [],
         },
     };
@@ -61,7 +52,8 @@ export default async function BlogPostPage({ params }: Props) {
         "headline": post.title,
         "image": post.thumbnailUrl,
         "author": {
-            "@type": "Person",
+            "@type": "Organization",
+            "@id": ORGANIZATION_ID,
             "name": "Equipe DWalt"
         },
         "publisher": {
@@ -69,12 +61,13 @@ export default async function BlogPostPage({ params }: Props) {
             "name": "DWalt Energia",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.dwalt.net/logo.png"
+                "url": "https://www.dwalt.net/logo-branca.svg"
             }
         },
         "datePublished": post.createdAt,
         "dateModified": post.updatedAt,
-        "description": post.excerpt || post.content.substring(0, 160)
+        "description": plainText(post.excerpt || post.content).slice(0, 170),
+        "mainEntityOfPage": `${SITE_URL}/blog/${encodeURIComponent(post.slug || slug)}`
     };
 
     return (
@@ -117,7 +110,7 @@ export default async function BlogPostPage({ params }: Props) {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
                             <img
                                 src={post.thumbnailUrl}
-                                alt={post.title}
+                                alt={post.title} width={1200} height={675}
                                 className="w-full h-full object-cover"
                             />
                         </div>

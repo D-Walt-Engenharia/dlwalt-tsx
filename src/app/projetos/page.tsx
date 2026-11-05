@@ -1,47 +1,15 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { getAllContent } from '@/lib/public-content';
+import { pageMetadata } from '@/lib/seo';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { MapPin, Briefcase } from 'lucide-react';
-import api from '@/lib/api';
 
-interface Project {
-    id: number;
-    name: string;
-    category: string;
-    location: string;
-    description: string;
-    photos: string[];
-    panelCount: number;
-    kwp: string;
-}
+export const metadata = pageMetadata('Projetos de energia solar em Rondônia | DWalt Energia', 'Conheça projetos de energia solar executados pela DWalt Energia em residências e empresas de Rondônia.', '/projetos');
 
-export default function ProjectsPage() {
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const { data } = await api.get("/projects");
-                let receivedData = [];
-                if (Array.isArray(data.data)) {
-                    receivedData = data.data;
-                } else if (data.data?.data && Array.isArray(data.data.data)) {
-                    receivedData = data.data.data;
-                }
-                setProjects(receivedData);
-            } catch (error) {
-                console.error("Failed to fetch projects", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProjects();
-    }, []);
-
+export default async function ProjectsPage() {
+    const projects = await getAllContent('projects');
     return (
         <div className="flex flex-col min-h-screen bg-black text-white">
             <Header />
@@ -63,8 +31,7 @@ export default function ProjectsPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {loading && <div className="col-span-3 text-center text-gray-500">Carregando projetos...</div>}
-                        {!loading && projects.map((project) => (
+                        {projects.map((project) => (
                             <Link
                                 key={project.id}
                                 href={`/projetos/${project.id}`}
@@ -73,7 +40,7 @@ export default function ProjectsPage() {
                                 <div className="aspect-[16/10] overflow-hidden relative">
                                     <img
                                         src={project.photos?.[0] || 'https://images.unsplash.com/photo-1548613053-220d938b8ca7?w=800&q=80'}
-                                        alt={project.name}
+                                        alt={project.name} width={800} height={500} loading="lazy" decoding="async"
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                     />
                                     <div className="absolute top-4 right-4 bg-black/70 backdrop-blur border border-white/10 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -103,7 +70,7 @@ export default function ProjectsPage() {
                                 </div>
                             </Link>
                         ))}
-                        {!loading && projects.length === 0 && (
+                        {projects.length === 0 && (
                             <div className="col-span-3 text-center text-gray-500">Nenhum projeto encontrado.</div>
                         )}
                     </div>

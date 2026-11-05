@@ -50,6 +50,7 @@ const OfficeCard: React.FC<OfficeCardProps> = ({ unit }) => {
 
             <div className="w-full h-[250px] relative filter grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                 <iframe
+                    title={`Localização da ${unit.name}`}
                     src={unit.mapEmbedUrl}
                     width="100%"
                     height="100%"

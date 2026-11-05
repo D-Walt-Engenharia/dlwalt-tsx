@@ -192,7 +192,7 @@ export function Testimonials() {
 
                                             {/* Author Profile */}
                                             <div className="flex items-center gap-4 mt-auto pt-6 border-t border-white/5">
-                                                <img src={t.avatar || "/placeholder-user.png"} alt={t.name} className="w-12 h-12 rounded-full border-2 border-primary/20 object-cover" />
+                                                <img src={t.avatar || "/placeholder-user.png"} width={48} height={48} loading="lazy" decoding="async" alt={t.name} className="w-12 h-12 rounded-full border-2 border-primary/20 object-cover" />
                                                 <div>
                                                     <h4 className="font-bold text-white leading-tight mb-1">{t.name}</h4>
                                                     <div className="flex items-center gap-1 text-xs text-gray-400">

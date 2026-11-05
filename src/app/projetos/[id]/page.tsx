@@ -1,27 +1,16 @@
-'use client';
 import { COMPANY_INFO } from "@/lib/data/company";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { getPublicProject } from '@/lib/public-content';
+import { ORGANIZATION_ID, pageMetadata, SITE_URL } from '@/lib/seo';
+import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { MapPin, Zap, ArrowLeft, BatteryCharging, PanelTop, Leaf, Wallet, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { JsonLd } from '@/components/JsonLd';
-import api from '@/lib/api';
 import { notFound } from 'next/navigation';
-import { motion } from 'framer-motion';
-
-interface Project {
-    id: number;
-    name: string;
-    category: string;
-    location: string;
-    description: string;
-    photos: string[];
-    panelCount: number;
-    kwp: string;
-}
 
 interface Props {
     params: Promise<{
@@ -29,89 +18,32 @@ interface Props {
     }>;
 }
 
-export default function ProjectDetailPage({ params }: Props) {
-    const [id, setId] = useState<string | null>(null);
-    const [project, setProject] = useState<Project | null>(null);
-    const [loading, setLoading] = useState(true);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params;
+    const project = await getPublicProject(id);
+    if (!project) return { title: 'Projeto não encontrado', robots: { index: false } };
+    return pageMetadata(`${project.name} em ${project.location} | DWalt Energia`, project.description, `/projetos/${project.id}`);
+}
 
-    useEffect(() => {
-        const unwrapParams = async () => {
-            const resolvedParams = await params;
-            setId(resolvedParams.id);
-        };
-        unwrapParams();
-    }, [params]);
-
-    useEffect(() => {
-        if (!id) return;
-
-        const fetchProject = async () => {
-            try {
-                const { data } = await api.get(`/projects/${id}`);
-                setProject(data.data);
-            } catch (error) {
-                console.error("Failed to fetch project", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProject();
-    }, [id]);
-
-    if (loading) {
-        return (
-            <div className="flex flex-col min-h-screen bg-black text-white">
-                <Header />
-                <main className="flex-grow pt-32 pb-20 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                        <p className="text-gray-500">Carregando detalhes do projeto...</p>
-                    </div>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
-
-    if (!project) {
-        return (
-            <div className="flex flex-col min-h-screen bg-black text-white">
-                <Header />
-                <main className="flex-grow pt-32 pb-20 flex items-center justify-center">
-                    <div className="text-center">
-                        <h1 className="text-2xl font-bold mb-4">Projeto não encontrado</h1>
-                        <Button asChild>
-                            <Link href="/projetos">Voltar para projetos</Link>
-                        </Button>
-                    </div>
-                </main>
-                <Footer />
-            </div>
-        );
-    }
+export default async function ProjectDetailPage({ params }: Props) {
+    const { id } = await params;
+    const project = await getPublicProject(id);
+    if (!project) notFound();
 
     // Calculations based on kWp
-    const kwp = parseFloat(project.kwp);
+    const kwp = parseFloat(String(project.kwp));
     const monthlyGeneration = Math.round(kwp * 125); // Approx kWh/month
     const annualSavings = Math.round(monthlyGeneration * 0.92 * 12); // Approx R$ 0.92/kWh
     const co2Saved = (monthlyGeneration * 12 * 0.1) / 1000; // Approx tons/year
     const treesSaved = Math.round(co2Saved * 7); // Approx trees
 
     const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": project.name,
-        "image": project.photos?.[0],
-        "description": project.description,
-        "brand": {
-            "@type": "Brand",
-            "name": "DWalt Energia"
-        },
-        "offers": {
-            "@type": "Offer",
-            "priceCurrency": "BRL",
-            "availability": "https://schema.org/InStock"
-        }
+        '@context': 'https://schema.org', '@type': 'CreativeWork',
+        '@id': `${SITE_URL}/projetos/${project.id}#project`,
+        name: project.name, image: project.photos?.[0], description: project.description,
+        url: `${SITE_URL}/projetos/${project.id}`,
+        creator: { '@id': ORGANIZATION_ID },
+        contentLocation: { '@type': 'Place', name: project.location },
     };
 
     return (
@@ -127,9 +59,7 @@ export default function ProjectDetailPage({ params }: Props) {
 
                     {/* Hero Section */}
                     <div className="grid lg:grid-cols-2 gap-12 mb-20">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
+                        <div
                             className="space-y-6"
                         >
                             <div className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-bold tracking-wider uppercase">
@@ -156,20 +86,18 @@ export default function ProjectDetailPage({ params }: Props) {
                                     <p className="text-2xl font-bold text-white">{project.panelCount} <span className="text-sm text-primary font-normal">unidades</span></p>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
 
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
+                        <div
                             className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/10 border border-white/10 aspect-[4/3] lg:aspect-auto lg:h-full"
                         >
                             <img
                                 src={project.photos?.[0] || 'https://images.unsplash.com/photo-1548613053-220d938b8ca7?w=800&q=80'}
-                                alt={project.name}
+                                alt={project.name} width={1200} height={900} fetchPriority="high"
                                 className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/* Impact & Simulations Section */}
@@ -202,7 +130,7 @@ export default function ProjectDetailPage({ params }: Props) {
                                 </div>
                                 <h3 className="text-gray-400 text-sm uppercase tracking-wider mb-2">Economia Anual Estimada</h3>
                                 <p className="text-4xl font-bold text-white mb-2">R$ {annualSavings.toLocaleString('pt-BR')}</p>
-                                <p className="text-xs text-gray-500">Baseado na tarifa média atual</p>
+                                <p className="text-xs text-gray-500">Simulação com tarifa de R$ 0,92/kWh</p>
                             </div>
 
                             {/* Environmental Impact Card */}
@@ -252,16 +180,13 @@ export default function ProjectDetailPage({ params }: Props) {
                                 ))}
                             </div>
                             <p className="text-center text-gray-500 text-sm mt-8">
-                                *Estimativa considerando inflação energética zero. O retorno real tende a ser ainda maior com os aumentos da tarifa.
+                                *Simulação ilustrativa com 125 kWh/kWp ao mês e R$ 0,92/kWh, sem inflação tarifária. Não representa geração medida nem garantia de economia; consumo, perdas e tarifas variam.
                             </p>
                         </div>
                     </div>
 
                     {/* CTA Section */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
+                    <div
                         className="bg-gradient-to-r from-zinc-900 to-zinc-900/50 border border-white/10 rounded-3xl p-12 text-center relative overflow-hidden"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -288,7 +213,7 @@ export default function ProjectDetailPage({ params }: Props) {
                                 </Button>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
                 </div>
             </main>
