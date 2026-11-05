@@ -17,10 +17,10 @@ export const COMPANY_INFO = {
         {
             id: "matriz",
             name: "Matriz - Ariquemes",
-            address: "Av. Canaã, 2500 - St. 03, Ariquemes - RO, 76870-164",
+            address: "Avenida Hugo Frey, 4752 (esquina com Rua Fernando Pessoa), Bom Jesus, Ariquemes - RO",
             phone: "(69) 99369-5702",
             whatsapp: "5569993695702",
-            mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7860.486182628491!2d-63.04342!3d-9.913701!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93cc90c1e2c420cf%3A0xfd5a1fbeea15df07!2sDWALT%20Energia%20Solar%20%7C%20Ariquemes%20%E2%80%93%20RO!5e0!3m2!1spt-BR!2sbr!4v1768525844958!5m2!1spt-BR!2sbr"
+            mapEmbedUrl: "https://www.google.com/maps?q=Avenida%20Hugo%20Frey%2C%204752%2C%20Bom%20Jesus%2C%20Ariquemes%20-%20RO&output=embed"
         },
         {
             id: "porto-velho",
