@@ -1,3 +1,5 @@
+import { trackWhatsAppQuote } from './whatsapp-quote';
+
 /**
  * Centralized tracking utility for Google Tag Manager (gtag) and Facebook Pixel (fbq)
  */
@@ -80,6 +82,7 @@ export const trackPixelEvent = (eventName: string, params: Record<string, any> =
  * Tracking for Contact (e.g. clicking WhatsApp, Email or Form Submission)
  */
 export const trackContact = (metodo: string, params: Record<string, any> = {}) => {
+  if (["whatsapp", "widget_whatsapp", "calculadora_whatsapp", "unidade_whatsapp"].includes(metodo)) trackWhatsAppQuote(metodo);
   trackPixelEvent("Contact", { metodo, ...params });
   trackEvent("contato", { metodo, ...params });
 };

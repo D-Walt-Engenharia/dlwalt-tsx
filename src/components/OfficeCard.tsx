@@ -3,6 +3,7 @@
 import React from 'react';
 import { MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
+import { trackContact } from '@/lib/tracking';
 
 interface OfficeCardProps {
     unit: {
@@ -39,7 +40,7 @@ const OfficeCard: React.FC<OfficeCardProps> = ({ unit }) => {
                 <div className="flex gap-3">
                     <Button
                         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
-                        onClick={() => window.open(`https://wa.me/${unit.whatsapp}`, '_blank')}
+                        onClick={() => { trackContact('unidade_whatsapp'); window.open(`https://wa.me/${unit.whatsapp}`, '_blank', 'noopener,noreferrer'); }}
                     >
                         <MessageCircle className="w-4 h-4 mr-2" />
                         WhatsApp

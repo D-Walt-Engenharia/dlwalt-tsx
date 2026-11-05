@@ -1,4 +1,5 @@
 'use client';
+import { COMPANY_INFO } from "@/lib/data/company";
 
 import React, { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
@@ -281,7 +282,7 @@ export default function ProjectDetailPage({ params }: Props) {
                                     </Link>
                                 </Button>
                                 <Button size="lg" variant="outline" className="border-white/10 hover:bg-white/5 text-white h-14 px-8 rounded-full text-lg" asChild>
-                                    <Link href="https://wa.me/5569999999999">
+                                    <Link href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}`}>
                                         Falar com Especialista
                                     </Link>
                                 </Button>

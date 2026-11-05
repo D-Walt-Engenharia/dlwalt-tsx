@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { Toaster } from 'sonner';
 import { AuthProvider } from "@/providers/auth-provider";
+import { WhatsAppTracking } from "@/components/WhatsAppTracking";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import { ScriptRenderer } from "@/components/ScriptRenderer";
 
@@ -118,6 +119,7 @@ export default async function RootLayout({
           <SmoothScroll />
           <JsonLd data={jsonLd} />
           {children}
+          <WhatsAppTracking />
           <WhatsAppWidget />
           <Toaster richColors position="top-center" closeButton />
         </AuthProvider>

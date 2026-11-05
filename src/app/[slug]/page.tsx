@@ -1,3 +1,4 @@
+import { COMPANY_INFO } from "@/lib/data/company";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { RONDONIA_CITIES, slugify } from "@/lib/constants/rondonia-cities";
@@ -224,7 +225,7 @@ export default async function LandingPage({ params }: Props) {
                                 <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
-                        <Link href={`https://wa.me/5569999999999?text=Ol%C3%A1%2C+tenho+interesse+em+${service.title}+em+${city}`} target="_blank" className="w-full sm:w-auto">
+                        <Link href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}?text=Ol%C3%A1%2C+tenho+interesse+em+${service.title}+em+${city}`} target="_blank" className="w-full sm:w-auto">
                             <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full text-lg px-8 h-16 bg-white/5 border-white/10 hover:bg-white/10 text-white hover:text-green-400 transition-colors font-medium backdrop-blur-sm">
                                 Falar no WhatsApp
                             </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "./ui/button";
+import { QuoteWhatsAppForm } from "./QuoteWhatsAppForm";
 import { Mail, MapPin, Phone, Send, Instagram, Facebook, Youtube, MessageCircle } from "lucide-react";
 import { COMPANY_INFO } from "@/lib/data/company";
 import { trackContact } from "@/lib/tracking";
@@ -96,50 +96,9 @@ export function Contact() {
                         </div>
 
                         <h3 className="text-2xl font-bold text-white mb-2">Solicite uma Proposta</h3>
-                        <p className="text-gray-400 text-sm mb-8">Preencha o formulário e entraremos em contato em até 24h.</p>
+                        <p className="text-gray-400 text-sm mb-8">Informe os dados abaixo e continue seu pedido de orçamento pelo WhatsApp.</p>
 
-                        <form
-                            className="space-y-5 relative z-10"
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                trackContact("formulario_contato");
-                                alert("Solicitação enviada com sucesso! (Rastreado)");
-                            }}
-                        >
-                            <div>
-                                <label htmlFor="name" className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nome Completo</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/50 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-gray-600"
-                                    placeholder="Digite seu nome"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/50 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-gray-600"
-                                    placeholder="seu@email.com"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="phone" className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Telefone</label>
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/50 text-white focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-gray-600"
-                                    placeholder="(99) 99999-9999"
-                                />
-                            </div>
-                            <Button type="submit" size="lg" className="w-full h-14 text-lg font-bold bg-primary text-black hover:bg-primary/90 mt-4 rounded-xl shadow-lg shadow-primary/25">
-                                Enviar Solicitação
-                            </Button>
-                            <p className="text-[10px] text-center text-gray-500 mt-4">
-                                Ao enviar, você concorda com nossa <a href="/politica-de-privacidade" className="underline hover:text-primary">Política de Privacidade</a>.
-                            </p>
-                        </form>
+                        <QuoteWhatsAppForm />
                     </div>
                 </div>
             </div>
