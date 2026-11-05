@@ -291,6 +291,7 @@ export default function FinancingSimulatorPage() {
                         alt="Casa com painéis de energia solar ao pôr do sol"
                         fill
                         priority
+                        quality={65}
                         sizes="100vw"
                         className="object-cover object-center"
                     />
@@ -398,9 +399,9 @@ export default function FinancingSimulatorPage() {
                             {/* STEP 1: DADOS PESSOAIS */}
                             {step === 1 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
+                                    <h2 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
                                         <User className="w-5 h-5 text-[#65e994]" /> Dados para sua simulação
-                                    </h3>
+                                    </h2>
                                     <div className="grid md:grid-cols-2 gap-5">
                                         <div className="md:col-span-2">
                                             <MoneyInput
@@ -513,9 +514,9 @@ export default function FinancingSimulatorPage() {
                             {/* STEP 2: DADOS FINANCEIROS */}
                             {step === 2 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
+                                    <h2 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
                                         <Briefcase className="w-5 h-5 text-[#65e994]" /> Renda e projeto solar
-                                    </h3>
+                                    </h2>
                                     <div className="grid md:grid-cols-2 gap-5">
                                         <MoneyInput
                                             name="monthlyIncome"
@@ -593,9 +594,9 @@ export default function FinancingSimulatorPage() {
                             {/* STEP 3: ENDEREÇO & SUBMIT */}
                             {step === 3 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
-                                    <h3 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
+                                    <h2 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
                                         <MapPin className="w-5 h-5 text-[#65e994]" /> Endereço
-                                    </h3>
+                                    </h2>
                                     <div className="grid md:grid-cols-12 gap-5">
                                         <div className="md:col-span-4 space-y-2">
                                             <label htmlFor="zipcode" className="text-sm font-medium text-gray-300">CEP</label>

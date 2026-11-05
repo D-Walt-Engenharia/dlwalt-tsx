@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { JsonLd } from "@/components/JsonLd";
@@ -8,16 +7,6 @@ import { Toaster } from 'sonner';
 import { AuthProvider } from "@/providers/auth-provider";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import { ScriptRenderer } from "@/components/ScriptRenderer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "DWalt Energia | Soluções em Energia Solar",
@@ -93,7 +82,7 @@ export default async function RootLayout({
         {/* Core Google tag (gtag.js) for AW-10800412438 loaded directly with Next Script */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-10800412438"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
         <Script id="google-analytics-init" strategy="beforeInteractive">
           {`
@@ -114,7 +103,7 @@ export default async function RootLayout({
         ))}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className="antialiased bg-background text-foreground"
       >
         {bodyScripts.map((script: any) => (
           <ScriptRenderer

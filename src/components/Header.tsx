@@ -42,7 +42,7 @@ export function Header() {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -59,7 +59,7 @@ export function Header() {
         >
             <div className="container mx-auto flex items-center justify-between px-4">
                 <Link href="/" className="flex items-center gap-2 relative z-50">
-                    <img src="/logo-branca.svg" alt="DWalt Energia" className="h-10 w-auto" />
+                    <img src="/logo-branca.svg" alt="DWalt Energia" width={158} height={40} className="h-10 w-[158px] shrink-0" />
                 </Link>
 
                 {/* Desktop Navigation */}
@@ -85,6 +85,7 @@ export function Header() {
                                 )}
                                 onMouseEnter={() => setActiveDropdown(key)}
                                 onClick={() => setActiveDropdown(activeDropdown === key ? null : key)}
+                                aria-expanded={activeDropdown === key}
                             >
                                 {section.title}
                                 <ChevronDown className={cn("h-4 w-4 transition-transform", activeDropdown === key ? "rotate-180" : "")} />
@@ -117,6 +118,9 @@ export function Header() {
                         isScrolled || mobileMenuOpen ? "text-foreground" : "text-white"
                     )}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    aria-label={mobileMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
+                    aria-expanded={mobileMenuOpen}
+                    aria-controls="mobile-navigation"
                 >
                     {mobileMenuOpen ? <X className="h-8 w-8" /> : <Menu className="h-8 w-8" />}
                 </button>
@@ -168,7 +172,7 @@ export function Header() {
 
             {/* Mobile Menu Overlay */}
             {mobileMenuOpen && (
-                <div className="fixed inset-0 z-40 bg-background pt-24 px-4 md:hidden flex flex-col gap-4 overflow-y-auto">
+                <nav id="mobile-navigation" aria-label="Navegação principal" className="fixed inset-0 z-40 bg-background pt-24 px-4 md:hidden flex flex-col gap-4 overflow-y-auto">
                     <Link
                         href="/#home"
                         className="text-lg font-medium py-3 border-b border-border/50"
@@ -209,7 +213,7 @@ export function Header() {
                     <Link href="/#contact" onClick={() => { trackEvent("clique_cta_cabecalho", { local: "mobile" }); setMobileMenuOpen(false); }} className="w-full mt-4">
                         <Button className="w-full" size="lg">Solicite um Orçamento</Button>
                     </Link>
-                </div>
+                </nav>
             )}
         </header>
     );
