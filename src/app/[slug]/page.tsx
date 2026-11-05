@@ -1,7 +1,9 @@
 import { COMPANY_INFO } from "@/lib/data/company";
 import { notFound } from "next/navigation";
+import { findRegionalPage, regionalPages, regionalSlug } from "@/lib/regional-pages";
+import { ORGANIZATION_ID, SITE_URL } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
 import { Metadata } from "next";
-import { RONDONIA_CITIES, slugify } from "@/lib/constants/rondonia-cities";
 import { SOLAR_SERVICES } from "@/lib/constants/services";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -9,27 +11,10 @@ import Link from "next/link";
 import { CheckCircle, MapPin, ArrowRight, AlertTriangle, ShieldCheck, TrendingUp, Sun } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { TESTIMONIALS } from "@/lib/constants/testimonials";
 
-// Force static generation for all combinations
-export async function generateStaticParams() {
-    const params = [];
-
-    for (const service of SOLAR_SERVICES) {
-        for (const city of RONDONIA_CITIES) {
-            const citySlug = slugify(city);
-            // Default version
-            params.push({
-                slug: `${service.slug}-em-${citySlug}`,
-            });
-            // State-specific version
-            params.push({
-                slug: `${service.slug}-em-${citySlug}-ro`,
-            });
-        }
-    }
-
-    return params;
+// Redirects are defined before the filesystem, keeping only canonical pages static.
+export function generateStaticParams() {
+    return regionalPages().map(({ canonical }) => ({ slug: canonical }));
 }
 
 interface Props {
@@ -37,28 +22,7 @@ interface Props {
 }
 
 async function getData(slug: string) {
-    // Brute-force match to find service and city from slug
-    // Format: [service-slug]-em-[city-slug]
-
-    // Normalize slug by removing common state suffixes (e.g., -ro)
-    const normalizedSlug = slug.endsWith("-ro") ? slug.slice(0, -3) : slug;
-
-    for (const service of SOLAR_SERVICES) {
-        if (normalizedSlug.startsWith(service.slug)) {
-            // Potential match, check if the rest is "em-[city-slug]"
-            const suffix = normalizedSlug.slice(service.slug.length);
-            if (suffix.startsWith("-em-")) {
-                const citySlug = suffix.replace("-em-", "");
-                const city = RONDONIA_CITIES.find(c => slugify(c) === citySlug);
-
-                if (city) {
-                    return { service, city };
-                }
-            }
-        }
-    }
-
-    return null;
+    return findRegionalPage(slug);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -69,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         return {};
     }
 
-    const { service, city } = data;
+    const { service, city, canonical } = data;
 
     const title = `${service.title} em ${city} (RO) | Energia Solar DWalt`;
     const description = `Economize com ${service.title} em ${city}. ${service.pain.split('?')[0]}? A DWalt oferece projetos de energia solar, instalação e manutenção. Peça um orçamento!`;
@@ -91,12 +55,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description,
         keywords: keywords.join(", "),
         alternates: {
-            canonical: `https://www.dwalt.net/${slug}`,
+            canonical: `${SITE_URL}/${canonical}`,
         },
         openGraph: {
             title,
             description,
-            url: `https://www.dwalt.net/${slug}`,
+            url: `${SITE_URL}/${canonical}`,
             siteName: "DWalt Energia",
             locale: "pt_BR",
             type: "website",
@@ -130,67 +94,24 @@ export default async function LandingPage({ params }: Props) {
         notFound();
     }
 
-    const { service, city } = data;
+    const { service, city, canonical } = data;
 
     const description = `Economize com ${service.title} em ${city}. ${service.pain.split('?')[0]}? A DWalt oferece projetos de energia solar, instalação e manutenção.`;
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "DWalt Energia",
-        "image": "https://www.dwalt.net/logo-branca.svg",
+        "@type": "Service",
+        "name": `${service.title} em ${city}`,
+        "serviceType": service.title,
         "description": description,
-        "telephone": "+5569993695702",
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": city,
-            "addressRegion": "RO",
-            "addressCountry": "BR"
-        },
-        "url": `https://www.dwalt.net/${slug}`,
-        "priceRange": "$$$",
-        "areaServed": {
-            "@type": "City",
-            "name": city
-        },
-        "openingHoursSpecification": {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday"
-            ],
-            "opens": "08:00",
-            "closes": "18:00"
-        },
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5.0",
-            "reviewCount": TESTIMONIALS.length.toString()
-        },
-        "review": TESTIMONIALS.map(t => ({
-            "@type": "Review",
-            "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": t.stars,
-                "bestRating": "5"
-            },
-            "author": {
-                "@type": "Person",
-                "name": t.name
-            },
-            "reviewBody": t.testimonial
-        }))
+        "provider": { "@id": ORGANIZATION_ID },
+        "areaServed": { "@type": "City", "name": city, "containedInPlace": { "@type": "State", "name": "Rondônia" } },
+        "url": `${SITE_URL}/${canonical}`,
     };
 
     return (
         <main className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-green-500/30">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            <JsonLd data={jsonLd} />
             <Header />
 
             {/* HERO SECTION */}
@@ -208,7 +129,7 @@ export default async function LandingPage({ params }: Props) {
                     </div>
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 tracking-tight leading-[1.1]">
-                        <span className="block text-white">{service.title}</span>
+                        <span className="block text-white">{service.title} em {city}</span>
                         <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 pb-2">
                             Profissional e Garantida
                         </span>
@@ -219,7 +140,7 @@ export default async function LandingPage({ params }: Props) {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Link href={service.ctaUrl || "/#contact"} className="w-full sm:w-auto" target={service.ctaUrl ? "_blank" : undefined}>
+                        <Link href={service.ctaUrl || "/solicitar-orcamento"} className="w-full sm:w-auto" target={service.ctaUrl ? "_blank" : undefined}>
                             <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white rounded-full text-lg px-10 h-16 shadow-[0_0_40px_-10px_rgba(22,163,74,0.5)] transition-all hover:scale-105 font-bold">
                                 {service.cta}
                                 <ArrowRight className="ml-2 w-5 h-5" />
@@ -231,6 +152,24 @@ export default async function LandingPage({ params }: Props) {
                             </Button>
                         </Link>
                     </div>
+                </div>
+            </section>
+
+            <section className="border-b border-white/10 bg-neutral-900/30 py-12">
+                <div className="container mx-auto px-4 max-w-5xl">
+                    <h2 className="text-2xl font-bold mb-4">Atendimento em {city}</h2>
+                    <p className="text-gray-300 leading-relaxed mb-6">A DWalt atende projetos em Rondônia a partir de suas unidades em Ariquemes, Porto Velho e Rolim de Moura. Converse com a equipe para confirmar a avaliação do imóvel, o deslocamento e as condições do serviço em {city}.</p>
+                    <div className="flex flex-wrap gap-4 text-green-400">
+                        <Link href="/unidades">Conheça nossas unidades</Link>
+                        <Link href="/projetos">Veja projetos realizados</Link>
+                        <Link href="/areas-de-atendimento">Cidades atendidas</Link>
+                    </div>
+                    <h3 className="text-lg font-semibold mt-8 mb-4">Outras soluções em {city}</h3>
+                    <ul className="grid sm:grid-cols-2 gap-3 text-gray-300">
+                        {SOLAR_SERVICES.filter(item => item.slug !== service.slug && item.slug !== 'afiliados').map(item => (
+                            <li key={item.slug}><Link className="hover:text-green-400 underline underline-offset-4" href={`/${regionalSlug(item.slug, city)}`}>{item.title} em {city}</Link></li>
+                        ))}
+                    </ul>
                 </div>
             </section>
 
@@ -363,7 +302,7 @@ export default async function LandingPage({ params }: Props) {
                                     <div className="w-12 h-12 rounded-full bg-zinc-900 border border-white/10 flex items-center justify-center text-xl font-bold text-white shrink-0">3</div>
                                     <div>
                                         <h4 className="font-bold text-lg mb-1">Suporte Local</h4>
-                                        <p className="text-gray-400 text-sm">Estamos pertinho de você em {city} para qualquer necessidade.</p>
+                                        <p className="text-gray-400 text-sm">Atendimento em {city} com suporte da nossa estrutura em Rondônia. Consulte a equipe sobre visitas e disponibilidade.</p>
                                     </div>
                                 </div>
                             </div>
@@ -400,7 +339,7 @@ export default async function LandingPage({ params }: Props) {
                         {service.cta.replace('Quero', 'Solicite')}.
                     </h2>
                     <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
-                        <Link href={service.ctaUrl || "/#contact"} className="w-full" target={service.ctaUrl ? "_blank" : undefined}>
+                        <Link href={service.ctaUrl || "/solicitar-orcamento"} className="w-full" target={service.ctaUrl ? "_blank" : undefined}>
                             <Button size="lg" className="w-full bg-white text-green-700 hover:bg-gray-100 rounded-full text-xl h-16 shadow-2xl font-bold border-none transition-transform hover:scale-105">
                                 {service.cta}
                             </Button>

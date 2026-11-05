@@ -12,7 +12,9 @@ import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 
 import { COMPANY_INFO } from "@/lib/data/company";
-import { TESTIMONIALS } from "@/lib/constants/testimonials";
+import { ORGANIZATION_ID, pageMetadata } from "@/lib/seo";
+
+export const metadata = pageMetadata("Energia Solar em Rondônia | DWalt Energia", "Projetos, instalação e manutenção de energia solar em Rondônia. Unidades em Ariquemes, Porto Velho e Rolim de Moura. Solicite seu orçamento.", "/");
 
 export default function Home() {
   const jsonLd = {
@@ -20,10 +22,12 @@ export default function Home() {
     "@graph": [
       {
         "@type": "LocalBusiness",
+        "@id": "https://www.dwalt.net/#ariquemes",
+        "parentOrganization": { "@id": ORGANIZATION_ID },
         "name": COMPANY_INFO.name,
         "image": "https://www.dwalt.net/logo-branca.svg",
         "description": COMPANY_INFO.description,
-        "telephone": COMPANY_INFO.contact.whatsapp,
+        "telephone": `+${COMPANY_INFO.contact.whatsapp}`,
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Ariquemes", // Main unit
@@ -33,36 +37,6 @@ export default function Home() {
         },
         "url": "https://www.dwalt.net",
         "priceRange": "$$$",
-        "openingHoursSpecification": {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday"
-          ],
-          "opens": "08:00",
-          "closes": "18:00"
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "5.0",
-          "reviewCount": TESTIMONIALS.length.toString()
-        },
-        "review": TESTIMONIALS.map(t => ({
-          "@type": "Review",
-          "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": t.stars,
-            "bestRating": "5"
-          },
-          "author": {
-            "@type": "Person",
-            "name": t.name
-          },
-          "reviewBody": t.testimonial
-        }))
       },
       {
         "@type": "FAQPage",

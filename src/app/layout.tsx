@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { organizationSchema, SITE_URL } from "@/lib/seo";
+import { GA4_MEASUREMENT_ID } from "@/lib/analytics";
 import Script from "next/script";
 import "./globals.css";
 import { JsonLd } from "@/components/JsonLd";
@@ -10,6 +12,7 @@ import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import { ScriptRenderer } from "@/components/ScriptRenderer";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "DWalt Energia | Soluções em Energia Solar",
   description: "Transforme sua conta de luz em investimento com a DWalt Energia. Projetos personalizados, economia de até 95% e tecnologia de ponta.",
   openGraph: {
@@ -47,32 +50,14 @@ export default async function RootLayout({
       const data = await res.json();
       if (Array.isArray(data)) {
         // Exclude script entries that duplicate Google tag AW-10800412438, which is loaded directly with Next.js Script
-        scripts = data.filter((s: any) => s.isActive && !s.code?.includes("AW-10800412438"));
+        scripts = data.filter((s: any) => s.isActive && !s.code?.includes("AW-10800412438") && !s.code?.includes(GA4_MEASUREMENT_ID));
       }
     }
   } catch (error) {
     console.error("Failed to fetch scripts:", error);
   }
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "DWalt Energia",
-    "url": "https://www.dwalt.net",
-    "logo": "https://www.dwalt.net/logo.png",
-    "sameAs": [
-      "https://instagram.com/dwaltenergia",
-      "https://facebook.com/dwaltenergia",
-      "https://youtube.com/dwaltenergia"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+5569999999999",
-      "contactType": "sales",
-      "areaServed": "BR",
-      "availableLanguage": "Portuguese"
-    }
-  };
+  const jsonLd = organizationSchema();
 
   const headScripts = scripts.filter((s: any) => !s.position || s.position === "head");
   const bodyScripts = scripts.filter((s: any) => s.position === "body_start" || s.position === "body_end");
@@ -91,6 +76,7 @@ export default async function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'AW-10800412438');
+            gtag('config', '${GA4_MEASUREMENT_ID}');
           `}
         </Script>
 

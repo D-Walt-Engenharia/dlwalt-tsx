@@ -1,7 +1,5 @@
 export const COMPANY_INFO = {
     name: "DWalt Energia",
-    legalName: "DWalt Energia Solar Ltda",
-    cnpj: "12.345.678/0001-99",
     description: "Especialistas em energia solar fotovoltaica e eficiência energética.",
     contact: {
         phone: "(69) 99369-5702",

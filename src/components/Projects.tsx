@@ -1,48 +1,17 @@
-'use client';
-
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import api from '@/lib/api';
+import { getAllContent, type PublicProject } from '@/lib/public-content';
 
-export interface Project {
-    id: number;
-    name: string;
-    category: string;
-    location: string;
-    description: string;
-    photos: string[];
-    panelCount: number;
-    kwp: string;
-    slug?: string; // Optional for backward compatibility if needed, but we use id
-}
+export type Project = PublicProject;
 
-export function Projects() {
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const { data } = await api.get("/projects");
-                let receivedData = [];
-                if (Array.isArray(data.data)) {
-                    receivedData = data.data;
-                } else if (data.data?.data && Array.isArray(data.data.data)) {
-                    receivedData = data.data.data;
-                }
-                // Take first 3 for home page
-                setProjects(receivedData.slice(0, 3));
-            } catch (error) {
-                console.error("Failed to fetch projects", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProjects();
-    }, []);
-
-    if (loading) return null; // Or a skeleton
+export async function Projects() {
+    let projects: PublicProject[];
+    try {
+        projects = (await getAllContent('projects')).slice(0, 3);
+    } catch {
+        // An unavailable portfolio must not take the main commercial page down.
+        return null;
+    }
 
     return (
         <section id="projects" className="py-24 bg-black text-white overflow-hidden">
@@ -74,7 +43,7 @@ export function Projects() {
                             <div className="aspect-[16/10] overflow-hidden relative">
                                 <img
                                     src={project.photos?.[0] || 'https://images.unsplash.com/photo-1548613053-220d938b8ca7?w=800&q=80'}
-                                    alt={project.name}
+                                    alt={project.name} width={800} height={500} loading="lazy" decoding="async"
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />

@@ -1,4 +1,5 @@
 'use client';
+import { trackConfirmedAnalyticsLead } from '@/lib/analytics';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
@@ -268,6 +269,7 @@ export default function FinancingSimulatorPage() {
             focusPendingRef.current = true;
             setRegistrationId(receipt.registrationId);
             setIsSubmitted(true);
+            try { trackConfirmedAnalyticsLead(receipt.registrationId); } catch { /* Keep the confirmed save successful. */ }
             // Meta Lead fires only for a backend-confirmed registration.
             try { trackFinancingLead(receipt.registrationId); } catch { /* Keep success visible. */ }
             // Tracking failures must never change a confirmed registration into a form error.

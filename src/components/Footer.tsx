@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail, Youtube } from "lucide-react";
+import { Facebook, Instagram, MapPin, Phone, Mail, Youtube } from "lucide-react";
 import { COMPANY_INFO } from "@/lib/data/company";
 
 export function Footer() {
@@ -38,7 +38,8 @@ export function Footer() {
                                 { name: "Serviços", href: "/#services" },
                                 { name: "Projetos", href: "/projetos" },
                                 { name: "Blog", href: "/blog" },
-                                { name: "Contato", href: "/#contact" }
+                                { name: "Contato", href: "/#contact" },
+                                { name: "Cidades atendidas", href: "/areas-de-atendimento" }
                             ].map((item) => (
                                 <li key={item.name}>
                                     <Link

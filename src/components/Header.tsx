@@ -19,6 +19,7 @@ const navigation = {
         title: "Institucional",
         items: [
             { name: "Sobre Nós", href: "/#about", icon: Users, description: "Conheça nossa história e missão." },
+            { name: "Cidades Atendidas", href: "/areas-de-atendimento", icon: MapPin, description: "Encontre informações sobre atendimento na sua cidade." },
             { name: "Nossas Unidades", href: "/unidades", icon: MapPin, description: "Encontre o escritório mais próximo de você." },
             { name: "Política de Privacidade", href: "/politica-de-privacidade", icon: Shield, description: "Como protegemos seus dados." },
             { name: "Termos de Uso", href: "/termos-de-uso", icon: FileText, description: "Regras de utilização do nosso site." },
