@@ -10,6 +10,7 @@ import { InputMask } from "@react-input/mask";
 import api from "@/lib/api";
 import { formatMoneyBRL, moneyDraftToApiValue, sanitizeMoneyDraft, getFinancingReceipt, validateFinancingForm, type FinancingFormData } from '@/lib/financing';
 import { trackFinancingRegistration } from '@/lib/financing-tracking';
+import { initializeFinancingPixel, trackFinancingLead } from '@/lib/financing-meta-pixel';
 import { COMPANY_INFO } from '@/lib/data/company';
 import { trackContact } from '@/lib/tracking';
 
@@ -125,6 +126,8 @@ export default function FinancingSimulatorPage() {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         panelRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     }, [step, validationError, submitError, isSubmitted, isLoading]);
+
+    useEffect(() => { initializeFinancingPixel(); }, []);
 
     useEffect(() => () => cepAbortRef.current?.abort(), []);
 
@@ -265,6 +268,8 @@ export default function FinancingSimulatorPage() {
             focusPendingRef.current = true;
             setRegistrationId(receipt.registrationId);
             setIsSubmitted(true);
+            // Meta Lead fires only for a backend-confirmed registration.
+            try { trackFinancingLead(receipt.registrationId); } catch { /* Keep success visible. */ }
             // Tracking failures must never change a confirmed registration into a form error.
             try {
                 trackFinancingRegistration(receipt.registrationId);
