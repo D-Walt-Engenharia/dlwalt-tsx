@@ -82,7 +82,7 @@ export default async function RootLayout({
         {/* Core Google tag (gtag.js) for AW-10800412438 loaded directly with Next Script */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-10800412438"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
         <Script id="google-analytics-init" strategy="beforeInteractive">
           {`
