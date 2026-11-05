@@ -16,7 +16,7 @@ export function Contact() {
                     <span>DESDE 2016</span>
                 </div>
                 <div className={styles.photo}>
-                    <Image src="https://api.dwalt.net/uploads/projects/1770834765172-9589.jpeg" alt="Instalação de painéis solares do portfólio da DWALT Energia" fill sizes="(min-width: 1024px) 620px, 100vw" quality={65} className={styles.photoImage} />
+                    <Image unoptimized src="/orcamento-instalacao.webp" alt="Instalação de painéis solares do portfólio da DWALT Energia" fill sizes="(min-width: 1024px) 620px, 100vw" quality={65} className={styles.photoImage} />
                 </div>
                 <div className={styles.content}>
                     <p className={styles.eyebrow}>ENERGIA SOLAR PARA SEU IMÓVEL</p>
