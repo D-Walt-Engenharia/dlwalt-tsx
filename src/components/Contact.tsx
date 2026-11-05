@@ -1,107 +1,45 @@
-"use client";
+'use client';
 
-import { QuoteWhatsAppForm } from "./QuoteWhatsAppForm";
-import { Mail, MapPin, Phone, Send, Instagram, Facebook, Youtube, MessageCircle } from "lucide-react";
-import { COMPANY_INFO } from "@/lib/data/company";
-import { trackContact } from "@/lib/tracking";
+import Image from 'next/image';
+import { Mail, MapPin, Phone, Instagram, Facebook, Youtube } from 'lucide-react';
+import { QuoteWhatsAppForm } from './QuoteWhatsAppForm';
+import { COMPANY_INFO } from '@/lib/data/company';
+import { trackContact } from '@/lib/tracking';
+import styles from './QuoteExperience.module.css';
 
 export function Contact() {
-    return (
-        <section id="contact" className="relative py-24 bg-black text-white overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-                    {/* Info Column */}
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
-                            <MessageCircle className="w-4 h-4" />
-                            Fale Conosco
-                        </div>
-                        <h2 className="text-4xl lg:text-5xl font-bold tracking-tight mb-6">
-                            Pronto para zerar sua <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-100">
-                                conta de luz?
-                            </span>
-                        </h2>
-                        <p className="text-gray-400 text-lg leading-relaxed mb-12 max-w-lg">
-                            Solicite um orçamento gratuito. Nossa equipe de engenheiros fará uma análise
-                            personalizada do seu perfil de consumo.
-                        </p>
-
-                        <div className="space-y-8">
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors">
-                                    <Phone className="w-6 h-6 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-lg text-white mb-1">Telefone / WhatsApp</p>
-                                    <a
-                                        href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}`}
-                                        target="_blank"
-                                        className="text-gray-400 hover:text-primary transition-colors"
-                                        onClick={() => trackContact("whatsapp")}
-                                    >
-                                        {COMPANY_INFO.contact.phone}
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors">
-                                    <Mail className="w-6 h-6 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-lg text-white mb-1">E-mail</p>
-                                    <a
-                                        href={`mailto:${COMPANY_INFO.contact.email}`}
-                                        className="text-gray-400 hover:text-primary transition-colors"
-                                        onClick={() => trackContact("email")}
-                                    >
-                                        {COMPANY_INFO.contact.email}
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-4 group">
-                                <div className="p-3 rounded-xl bg-white/5 border border-white/10 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors">
-                                    <MapPin className="w-6 h-6 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="font-bold text-lg text-white mb-1">Matriz</p>
-                                    <p className="text-gray-400 text-sm max-w-xs">{COMPANY_INFO.units[0].address}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-12 pt-8 border-t border-white/10 flex gap-4">
-                            <a href={COMPANY_INFO.social.instagram} target="_blank" className="p-3 rounded-full bg-white/5 hover:bg-white/10 hover:text-pink-500 transition-colors">
-                                <Instagram className="w-5 h-5" />
-                            </a>
-                            <a href={COMPANY_INFO.social.facebook} target="_blank" className="p-3 rounded-full bg-white/5 hover:bg-white/10 hover:text-blue-500 transition-colors">
-                                <Facebook className="w-5 h-5" />
-                            </a>
-                            <a href={COMPANY_INFO.social.youtube} target="_blank" className="p-3 rounded-full bg-white/5 hover:bg-white/10 hover:text-red-500 transition-colors">
-                                <Youtube className="w-5 h-5" />
-                            </a>
-                        </div>
-                    </div>
-
-                    {/* Form Column */}
-                    <div className="bg-white/5 border border-white/10 p-8 md:p-10 rounded-3xl backdrop-blur-md shadow-2xl relative">
-                        <div className="absolute top-0 right-0 p-8 opacity-20">
-                            <Send className="w-24 h-24 text-white rotate-12" />
-                        </div>
-
-                        <h3 className="text-2xl font-bold text-white mb-2">Solicite uma Proposta</h3>
-                        <p className="text-gray-400 text-sm mb-8">Informe os dados abaixo e continue seu pedido de orçamento pelo WhatsApp.</p>
-
-                        <QuoteWhatsAppForm />
-                    </div>
+    return <section id="contact" className={styles.section} aria-labelledby="quote-heading">
+        <div className={styles.layout}>
+            <div className={styles.experience}>
+                <div className={styles.brandRow}>
+                    <Image src="/logo-branca.svg" width={142} height={38} alt="DWalt Energia" className={styles.logo} />
+                    <span>DESDE 2016</span>
+                </div>
+                <div className={styles.photo}>
+                    <Image src="https://api.dwalt.net/uploads/projects/1770834765172-9589.jpeg" alt="Instalação de painéis solares do portfólio da DWALT Energia" fill sizes="(min-width: 1024px) 620px, 100vw" quality={65} className={styles.photoImage} />
+                </div>
+                <div className={styles.content}>
+                    <p className={styles.eyebrow}>ENERGIA SOLAR PARA SEU IMÓVEL</p>
+                    <h2 id="quote-heading" className={styles.headline}>Sua próxima conta<br />pode ser <span>mais leve.</span></h2>
+                    <p className={styles.intro}>Peça uma proposta personalizada para sua casa ou empresa.</p>
+                    <p className={styles.trust}>10 anos de história <span aria-hidden="true">·</span> Atendimento em Rondônia</p>
+                    <QuoteWhatsAppForm />
+                    <p className={styles.signature}>Energia que vem do alto.</p>
                 </div>
             </div>
-        </section>
-    );
+            <aside className={styles.contacts} aria-label="Contatos e endereço da DWALT">
+                <p className={styles.eyebrow}>PERTO DE VOCÊ</p>
+                <h3>Uma equipe de verdade.<br /><span>Do projeto ao pós-venda.</span></h3>
+                <p className={styles.contactIntro}>Converse com a DWALT e encontre a solução de energia solar para o seu imóvel.</p>
+                <div className={styles.contactItem}><Phone aria-hidden="true" size={21} /><div><p>Telefone / WhatsApp</p><a href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}`} target="_blank" rel="noopener noreferrer" onClick={() => trackContact('whatsapp')}>{COMPANY_INFO.contact.phone}</a></div></div>
+                <div className={styles.contactItem}><Mail aria-hidden="true" size={21} /><div><p>E-mail</p><a href={`mailto:${COMPANY_INFO.contact.email}`} onClick={() => trackContact('email')}>{COMPANY_INFO.contact.email}</a></div></div>
+                <div className={styles.contactItem}><MapPin aria-hidden="true" size={21} /><div><p>Matriz · Ariquemes</p><span>{COMPANY_INFO.units[0].address}</span></div></div>
+                <div className={styles.socials}>
+                    <a href={COMPANY_INFO.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram da DWALT"><Instagram size={20} /></a>
+                    <a href={COMPANY_INFO.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook da DWALT"><Facebook size={20} /></a>
+                    <a href={COMPANY_INFO.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube da DWALT"><Youtube size={20} /></a>
+                </div>
+            </aside>
+        </div>
+    </section>;
 }
