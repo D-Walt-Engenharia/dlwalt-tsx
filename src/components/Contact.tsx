@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
+import Link from 'next/link';
 import { Mail, MapPin, Phone, Instagram, Facebook, Youtube } from 'lucide-react';
-import { QuoteWhatsAppForm } from './QuoteWhatsAppForm';
 import { COMPANY_INFO } from '@/lib/data/company';
 import { trackContact } from '@/lib/tracking';
 import styles from './QuoteExperience.module.css';
@@ -10,22 +9,13 @@ import styles from './QuoteExperience.module.css';
 export function Contact() {
     return <section id="contact" className={styles.section} aria-labelledby="quote-heading">
         <div className={styles.layout}>
-            <div className={styles.experience}>
-                <div className={styles.brandRow}>
-                    <Image src="/logo-branca.svg" width={142} height={38} alt="DWalt Energia" className={styles.logo} />
-                    <span>DESDE 2016</span>
-                </div>
-                <div className={styles.photo}>
-                    <Image unoptimized src="/orcamento-instalacao.webp" alt="Instalação de painéis solares do portfólio da DWALT Energia" fill sizes="(min-width: 1024px) 620px, 100vw" quality={65} className={styles.photoImage} />
-                </div>
-                <div className={styles.content}>
-                    <p className={styles.eyebrow}>ENERGIA SOLAR PARA SEU IMÓVEL</p>
-                    <h2 id="quote-heading" className={styles.headline}>Sua próxima conta<br />pode ser <span>mais leve.</span></h2>
-                    <p className={styles.intro}>Peça uma proposta personalizada para sua casa ou empresa.</p>
-                    <p className={styles.trust}>10 anos de história <span aria-hidden="true">·</span> Atendimento em Rondônia</p>
-                    <QuoteWhatsAppForm />
-                    <p className={styles.signature}>Energia que vem do alto.</p>
-                </div>
+            <div className={styles.homeInvite}>
+                <p className={styles.eyebrow}>ENERGIA SOLAR PARA SEU IMÓVEL</p>
+                <h2 id="quote-heading" className={styles.headline}>Sua próxima conta<br />pode ser <span>mais leve.</span></h2>
+                <p className={styles.intro}>Peça uma proposta personalizada para sua casa ou empresa.</p>
+                <p className={styles.trust}>10 anos de história <span aria-hidden="true">·</span> Atendimento em Rondônia</p>
+                <Link href="/solicitar-orcamento" className={styles.cta}>Solicitar meu orçamento <span aria-hidden="true">→</span></Link>
+                <p className={styles.reassurance}>Grátis e sem compromisso</p>
             </div>
             <aside className={styles.contacts} aria-label="Contatos e endereço da DWALT">
                 <p className={styles.eyebrow}>PERTO DE VOCÊ</p>

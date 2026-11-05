@@ -19,6 +19,7 @@ export function WhatsAppWidget() {
         observer.observe(contact);
         return () => observer.disconnect();
     }, [pathname]);
+    if (pathname === "/solicitar-orcamento" || pathname?.startsWith("/solicitar-orcamento/")) return null;
     if (quoteState.pathname === pathname && quoteState.visible) return null;
     if (pathname === "/simular-financiamento" || pathname?.startsWith("/simular-financiamento/")) return null;
     return <WhatsAppChat />;

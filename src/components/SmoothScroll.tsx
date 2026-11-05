@@ -8,6 +8,7 @@ export const SmoothScroll = () => {
     const pathname = usePathname();
     useEffect(() => {
         // Keep browser-native scrolling for the form and mobile keyboards.
+        if (pathname === '/solicitar-orcamento' || pathname?.startsWith('/solicitar-orcamento/')) return;
         if (pathname === '/simular-financiamento' || pathname?.startsWith('/simular-financiamento/')) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches) return;
 

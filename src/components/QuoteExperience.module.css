@@ -52,3 +52,17 @@
 @media (max-width: 1023px) { .layout { grid-template-columns: minmax(0, 580px); justify-content: center; gap: 46px; } .contacts { padding: 0 12px; } }
 @media (max-width: 480px) { .section { padding: 36px 14px 48px; } .experience { border-radius: 18px; } .brandRow { padding: 15px 20px; } .logo { width: 126px; height: 34px; } .brandRow > span { font-size: 9px; } .photo { height: 138px; } .content { padding: 22px 18px; } .headline { font-size: 30px; } .intro { font-size: 15px; } .trust { font-size: 11px; } .form { padding: 21px 18px; min-height: 324px; } .question { font-size: 22px; } .cta { font-size: 15px; gap: 8px; } .contacts h3 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .cta { transition: none; } }
+
+/* Dedicated quote destination: one brand, one house image and one form. */
+.landing { min-height: 100svh; background: #101215; color: #f6f7f8; padding: 28px 20px; display: flex; align-items: flex-start; justify-content: center; }
+.landingCard { width: 100%; max-width: 560px; background: #111416; border: 1px solid #34383c; border-radius: 22px; overflow: hidden; }
+.housePhoto { position: relative; width: 100%; height: 180px; background: #24292c; }
+.houseImage { object-fit: cover; object-position: center 48%; }
+.landingContent { padding: 26px; }
+.landingContent .headline { font-size: clamp(30px, 4vw, 38px); }
+.landingFooter { text-align: center; }
+.landingFooter > a { display: inline-block; font-size: 11px; color: #bcc4c9; text-decoration: underline; text-underline-offset: 3px; margin-top: 16px; padding: 5px; }
+.homeInvite { padding: 30px 0; }
+.homeInvite .cta { display: inline-flex; max-width: 340px; margin-top: 20px; text-decoration: none; }
+.homeInvite .reassurance { max-width: 340px; }
+@media (max-width: 600px) { .landing { padding: 0; } .landingCard { border: 0; border-radius: 0; } .landingContent { padding: 23px 20px 28px; } .housePhoto { height: 155px; } .landingCard .brandRow { padding: 18px 23px; } .landingContent .form { padding: 21px 18px; } }
