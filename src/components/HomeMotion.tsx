@@ -5,80 +5,76 @@ const clip = '/api/home-animation?v=modelo01-v2';
 
 export function HomeMotion() {
   const video = useRef<HTMLVideoElement>(null);
-  const userPaused = useRef(false);
-  const [playing, setPlaying] = useState(false);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     const root = document.getElementById('dwalt-home');
-    const hero = document.getElementById('home');
     const media = video.current;
-    if (!root || !hero || !media) return;
+    if (!root || !media) return;
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
-    const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-    const targets: HTMLElement[] = [];
+    let disposed = false;
     let reveal: IntersectionObserver | undefined;
-    let visible = true;
-    let visibility: IntersectionObserver | undefined;
-    media.muted = true;
-    media.defaultMuted = true;
-    const attemptPlay = () => {
-      if (document.hidden || !visible || userPaused.current || preference.matches) return;
-      void media.play().catch(() => setPlaying(false));
-    };
+    const animations: Animation[] = [];
+
+    // Observe the actual text throughout the homepage. Content stays readable
+    // without JavaScript; animation does not depend on hidden CSS attributes.
     if (!preference.matches && 'IntersectionObserver' in window) {
       reveal = new IntersectionObserver(entries => entries.forEach(entry => {
         if (!entry.isIntersecting) return;
-        entry.target.removeAttribute('data-home-reveal');
         reveal?.unobserve(entry.target);
-      }), { threshold: 0.08 });
-      root.querySelectorAll<HTMLElement>('section:not(#home) h2, section:not(#home) h2 + p, [data-home-card]').forEach(element => {
-        if (element.getBoundingClientRect().top < innerHeight) return;
-        element.setAttribute('data-home-reveal', '');
-        targets.push(element);
+        const element = entry.target as HTMLElement;
+        if (typeof element.animate === 'function') animations.push(element.animate([
+          { opacity: 0, transform: 'translateY(18px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ], { duration: 650, easing: 'cubic-bezier(.2,.65,.3,1)' }));
+      }), { threshold: 0.12 });
+      root.querySelectorAll<HTMLElement>('section h1, section h2, section h3, section p, [data-home-card]').forEach(element => {
+        // A service card enters as a unit; avoid animating its children twice.
+        if (element.parentElement?.closest('[data-home-card]')) return;
         reveal?.observe(element);
       });
     }
-    if ('IntersectionObserver' in window) {
-      visibility = new IntersectionObserver(entries => {
-        visible = entries[0]?.isIntersecting ?? false;
-        if (!visible) media.pause();
-        else if (media.getAttribute('src')) attemptPlay();
+    media.muted = true;
+    media.defaultMuted = true;
+    media.loop = true;
+    const attemptPlay = () => {
+      if (disposed || document.hidden || preference.matches) return;
+      if (!media.getAttribute('src')) { media.src = clip; media.load(); }
+      void media.play().catch(() => {
+        // iOS may require a gesture. The first page interaction retries inline,
+        // without adding a visible player control or changing navigation.
       });
-      visibility.observe(hero);
-    }
-    const onVisibility = () => { if (document.hidden) media.pause(); else attemptPlay(); };
+    };
+    const onEnded = () => { media.currentTime = 0; attemptPlay(); };
     const onPreference = () => {
       if (preference.matches) {
         media.pause(); setLoaded(false);
-        targets.forEach(element => element.removeAttribute('data-home-reveal'));
+        animations.forEach(animation => animation.cancel());
+        reveal?.disconnect();
       } else attemptPlay();
     };
-    document.addEventListener('visibilitychange', onVisibility);
+    document.addEventListener('visibilitychange', attemptPlay);
+    document.addEventListener('pointerdown', attemptPlay, { passive: true });
+    document.addEventListener('keydown', attemptPlay);
     preference.addEventListener('change', onPreference);
-    const timer = window.setTimeout(() => {
-      if (preference.matches || connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || '')) return;
-      media.src = clip; media.load(); attemptPlay();
-    }, 450);
+    media.addEventListener('canplay', attemptPlay);
+    media.addEventListener('pause', attemptPlay);
+    media.addEventListener('ended', onEnded);
+    const timer = window.setTimeout(attemptPlay, 450);
     return () => {
-      clearTimeout(timer); reveal?.disconnect(); visibility?.disconnect();
-      document.removeEventListener('visibilitychange', onVisibility);
+      disposed = true;
+      clearTimeout(timer);
+      reveal?.disconnect();
+      animations.forEach(animation => animation.cancel());
+      document.removeEventListener('visibilitychange', attemptPlay);
+      document.removeEventListener('pointerdown', attemptPlay);
+      document.removeEventListener('keydown', attemptPlay);
       preference.removeEventListener('change', onPreference);
-      targets.forEach(element => element.removeAttribute('data-home-reveal'));
+      media.removeEventListener('canplay', attemptPlay);
+      media.removeEventListener('pause', attemptPlay);
+      media.removeEventListener('ended', onEnded);
       media.pause();
     };
   }, []);
-  return <>
-    <video ref={video} className={styles.motion} data-loaded={loaded ? 'true' : undefined} autoPlay muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1}
-      onPlaying={() => { setLoaded(true); setPlaying(true); }}
-      onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => { setLoaded(false); setPlaying(false); }} />
-    <button type="button" className={styles.motionControl} aria-label={playing ? 'Pausar animação de fundo' : 'Reproduzir animação de fundo'} onClick={() => {
-      const media = video.current;
-      if (!media) return;
-      if (!media.paused) { userPaused.current = true; media.pause(); return; }
-      userPaused.current = false; media.muted = true; media.defaultMuted = true;
-      if (!media.getAttribute('src')) { media.src = clip; media.load(); }
-      // Remains inside the tap gesture for iOS autoplay restrictions.
-      void media.play().then(() => { setLoaded(true); setPlaying(true); }).catch(() => setPlaying(false));
-    }}><span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span> {playing ? 'Pausar' : 'Reproduzir animação'}</button>
-  </>;
+  return <video ref={video} className={styles.motion} data-loaded={loaded ? 'true' : undefined} autoPlay muted loop playsInline preload="none" aria-hidden="true" tabIndex={-1}
+    onPlaying={() => setLoaded(true)} onError={() => setLoaded(false)} />;
 }
