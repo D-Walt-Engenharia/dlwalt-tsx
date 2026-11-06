@@ -4,9 +4,7 @@ import { trackConfirmedAnalyticsLead } from '@/lib/analytics';
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { PiggyBank, Briefcase, MapPin, User, Phone, Calendar, FileText, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from 'lucide-react';
+import { Briefcase, MapPin, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from 'lucide-react';
 import { InputMask } from "@react-input/mask";
 import api from "@/lib/api";
 import { formatMoneyBRL, moneyDraftToApiValue, sanitizeMoneyDraft, getFinancingReceipt, validateFinancingForm, type FinancingFormData } from '@/lib/financing';
@@ -288,45 +286,39 @@ export default function FinancingSimulatorPage() {
     };
 
     return (
-        <div className="financing-shell flex flex-col min-h-screen bg-black text-white">
-            <Header />
+        <div className="financing-shell financing-blue flex flex-col min-h-screen text-white">
+            <header className="financing-brandbar">
+                <Link href="/" aria-label="Página inicial da DWalt Energia">
+                    <Image src="/logo-branca.svg" alt="DWalt Energia" width={168} height={44} unoptimized />
+                </Link>
+            </header>
 
-            <div className="financing-hero relative w-full overflow-hidden">
-                <div className="absolute inset-0 z-0">
+            <section className="financing-hero relative w-full" aria-labelledby="financing-page-title">
+                <div className="financing-house relative">
                     <Image
-                        src="/solar-roof-sunset.jpg"
+                        src="/financiamento-casa-azul.webp"
                         alt="Casa com painéis de energia solar ao pôr do sol"
                         fill
-                        priority
-                        quality={65}
-                        sizes="100vw"
+                        preload
+                        unoptimized
+                        sizes="(min-width: 1120px) 1120px, 100vw"
                         className="object-cover object-center"
                     />
                     <div className="financing-hero-shade absolute inset-0" />
                 </div>
-
-                <div className="container relative z-10 mx-auto px-5 sm:px-6 max-w-4xl">
-                    <div className="text-left max-w-2xl">
-                        <div className="financing-badge inline-flex items-center gap-2 rounded-full border px-3.5 py-2 font-semibold backdrop-blur-md">
-                            <PiggyBank aria-hidden="true" className="w-4 h-4" />
-                            Simulação de financiamento
-                        </div>
-
-                        <h1 className="financing-title mt-4 text-white">
-                            <span className="block">Simule o financiamento</span>
-                            <span className="financing-title-accent">da sua energia solar</span>
-                        </h1>
-
-                        <p className="financing-intro mt-4 max-w-xl">
-                            Preencha seus dados para solicitar a análise e receber uma simulação de financiamento do seu projeto solar pelo WhatsApp.
-                        </p>
-                    </div>
+                <div className="financing-hero-copy relative z-10 mx-auto text-center">
+                    <p className="financing-eyebrow">SEU PROJETO SOLAR COMEÇA AQUI</p>
+                    <h1 id="financing-page-title" className="financing-title text-white">
+                        <span className="block">Simule o financiamento</span>
+                        <span className="financing-title-accent">da sua energia solar.</span>
+                    </h1>
+                    <span className="financing-title-rule" aria-hidden="true" />
                 </div>
-            </div>
+            </section>
 
-            <main className="financing-main relative z-10 flex-grow pb-28 sm:pb-24">
+            <main className="financing-main relative z-10 flex-grow">
                 <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
-                    <div ref={panelRef} className="financing-panel rounded-[26px] border p-5 sm:p-7 md:p-10 scroll-mt-36 sm:scroll-mt-40">
+                    <div ref={panelRef} className="financing-panel rounded-[26px] border p-5 sm:p-7 md:p-10 scroll-mt-6">
                         {isSubmitted ? (
                             <section aria-labelledby="financing-success-heading" className="financing-status-enter mx-auto max-w-lg space-y-6 py-6 sm:py-10 text-center">
                                 <div className="financing-success-mark mx-auto flex h-20 w-20 items-center justify-center rounded-full">
@@ -375,19 +367,19 @@ export default function FinancingSimulatorPage() {
                             </section>
                         ) : (
                             <>
-                                <ol aria-label="Etapas do cadastro" className="grid grid-cols-3 gap-3 mb-4">
+                                <ol aria-label="Etapas do cadastro" className="financing-progress grid grid-cols-3 gap-3 mb-4">
                                     {['Conta e dados', 'Renda e imóvel', 'Endereço'].map((label, index) => {
                                         const number = index + 1;
                                         return (
-                                            <li key={label} aria-current={step === number ? 'step' : undefined} className={`flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 border-t-2 pt-2.5 text-[11px] sm:text-xs ${step >= number ? 'border-[#58e692] text-[#70eea1]' : 'border-white/10 text-gray-500'}`}>
-                                                <span className="font-bold">0{number}</span>
+                                            <li key={label} aria-current={step === number ? 'step' : undefined} className={`financing-progress-step ${step >= number ? 'is-active' : ''}`}>
+                                                <span className="financing-progress-number">{number}</span>
                                                 <span>{label}</span>
                                             </li>
                                         );
                                     })}
                                 </ol>
                                 <p id="financing-purpose" className="text-xs text-gray-400 leading-relaxed mb-6">
-                                    Etapa {step} de 3 · Preencha os dados para solicitar sua simulação.
+                                    Etapa {step} de 3
                                 </p>
                                 {submitError && (
                                     <div ref={submitErrorRef} role="alert" tabIndex={-1} className="flex items-start gap-3 rounded-xl border border-red-400/30 bg-red-500/10 p-4 mb-6 text-sm text-red-200 outline-none">
@@ -405,9 +397,9 @@ export default function FinancingSimulatorPage() {
 
                             {/* STEP 1: DADOS PESSOAIS */}
                             {step === 1 && (
-                                <div className="space-y-6 animate-in fade-in duration-300">
+                                <div className="financing-step-personal space-y-6 animate-in fade-in duration-300">
                                     <h2 ref={stepHeadingRef} tabIndex={-1} className="financing-step-title flex items-center gap-2.5 text-[#65e994] border-b border-white/10 pb-4 outline-none">
-                                        <User className="w-5 h-5 text-[#65e994]" /> Dados para sua simulação
+                                        Comece sua simulação
                                     </h2>
                                     <div className="grid md:grid-cols-2 gap-5">
                                         <div className="md:col-span-2">
@@ -423,14 +415,14 @@ export default function FinancingSimulatorPage() {
                                             <label htmlFor="fullName" className="text-sm font-medium text-gray-300">Nome completo</label>
                                             <FieldError field="fullName" error={validationError} />
                                             <div className="relative">
-                                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+
                                                 <input
                                                     name="fullName"
                                                     {...fieldAccessibility('fullName')}
                                                     autoComplete="name"
                                                     value={formDataState.fullName}
                                                     onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
+                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
                                                     required
                                                     placeholder="Seu nome completo"
                                                 />
@@ -441,7 +433,7 @@ export default function FinancingSimulatorPage() {
                                             <label htmlFor="cpf" className="text-sm font-medium text-gray-300">CPF</label>
                                             <FieldError field="cpf" error={validationError} />
                                             <div className="relative">
-                                                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+
                                                 <InputMask
                                                     mask="___.___.___-__"
                                                     replacement={{ _: /\d/ }}
@@ -451,7 +443,7 @@ export default function FinancingSimulatorPage() {
                                                     autoComplete="off"
                                                     value={formDataState.cpf}
                                                     onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
+                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
                                                     required
                                                     placeholder="000.000.000-00"
                                                 />
@@ -462,7 +454,7 @@ export default function FinancingSimulatorPage() {
                                             <label htmlFor="birthDate" className="text-sm font-medium text-gray-300">Data de nascimento</label>
                                             <FieldError field="birthDate" error={validationError} />
                                             <div className="relative">
-                                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
+
                                                 <InputMask
                                                     mask="__/__/____"
                                                     replacement={{ _: /\d/ }}
@@ -472,7 +464,7 @@ export default function FinancingSimulatorPage() {
                                                     autoComplete="bday"
                                                     value={formDataState.birthDate}
                                                     onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
+                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
                                                     required
                                                     placeholder="dd/mm/aaaa"
                                                 />
@@ -480,10 +472,10 @@ export default function FinancingSimulatorPage() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label htmlFor="phone" className="text-sm font-medium text-gray-300">Telefone / WhatsApp</label>
+                                            <label htmlFor="phone" className="text-sm font-medium text-gray-300">WhatsApp com DDD</label>
                                             <FieldError field="phone" error={validationError} />
                                             <div className="relative">
-                                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+
                                                 <InputMask
                                                     mask="(__) _____-____"
                                                     replacement={{ _: /\d/ }}
@@ -494,7 +486,7 @@ export default function FinancingSimulatorPage() {
                                                     autoComplete="tel-national"
                                                     value={formDataState.phone}
                                                     onChange={handleInputChange}
-                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
+                                                    className="w-full bg-[#121417] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-500 focus:border-[#4ade80] focus:ring-1 focus:ring-[#4ade80] outline-none transition-all"
                                                     required
                                                     placeholder="(99) 99999-9999"
                                                 />
@@ -511,7 +503,7 @@ export default function FinancingSimulatorPage() {
                                             type="submit"
                                             className="financing-primary w-full h-14 text-black font-bold text-base rounded-2xl flex items-center justify-center gap-2 cursor-pointer"
                                         >
-                                            <span>Continuar</span>
+                                            <span>Continuar minha simulação</span>
                                             <ArrowRight className="w-5 h-5 text-black stroke-[2.5]" />
                                         </button>
                                     </div>
@@ -722,7 +714,11 @@ export default function FinancingSimulatorPage() {
 
                             </fieldset>
                         </form>
-                        <p className="mt-7 pt-5 border-t border-white/10 text-center text-sm text-gray-400">
+                        <p className="financing-credit-note">
+                            Análise gratuita · Sujeito à análise de crédito.<br />
+                            <Link href="/politica-de-privacidade" className="underline underline-offset-4">Política de Privacidade</Link>
+                        </p>
+                        <p className="financing-help mt-7 pt-5 border-t border-white/10 text-center text-sm text-gray-400">
                             Precisa de ajuda para preencher?{' '}
                             <a
                                 href={`https://wa.me/${COMPANY_INFO.contact.whatsapp}`}
@@ -740,7 +736,17 @@ export default function FinancingSimulatorPage() {
                     </div>
                 </div>
             </main>
-            <Footer />
+            {!isSubmitted && !isLoading && (
+                <section className="financing-benefits" aria-label="Sobre a simulação">
+                    <h2>Conheça as condições para o seu projeto<br className="hidden sm:block" /> e receba o resultado pelo WhatsApp.</h2>
+                    <ul>
+                        <li>10 anos de história</li>
+                        <li>Atendimento em Rondônia</li>
+                        <li>Sem compromisso</li>
+                    </ul>
+                </section>
+            )}
+            <footer className="financing-footer">Energia que vem do alto.</footer>
 
         </div>
     );
