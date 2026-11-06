@@ -126,3 +126,19 @@ test('GA4 lead is sent once for a confirmed record, without applicant values', (
         assert.deepEqual(Object.keys(events[0][2]).sort(), ['event_id', 'lead_source', 'send_to']);
     } finally { delete global.window; }
 });
+
+test('project evidence matches the city, accents and state without borrowing nearby works', () => {
+    const { projectCity, projectsInCity, unitInCity } = load('src/lib/local-evidence.ts');
+    assert.equal(projectCity({ location: 'CACAULANDIA-RO' }), 'Cacaulândia');
+    assert.equal(projectCity({ location: 'Condomínio Jardins, Ariquemes / RO' }), 'Ariquemes');
+    assert.equal(projectCity({ location: 'Ji-Paraná, Rondônia, Brasil' }), 'Ji-Paraná');
+    assert.equal(projectCity({ location: 'Nova Brasilândia D’Oeste - RO' }), "Nova Brasilândia D'Oeste");
+    assert.equal(projectCity({ location: 'Monte Negro do Guaporé' }), null);
+    assert.equal(projectCity({ location: 'Local não informado' }), null);
+    assert.equal(projectCity({ location: 'Ariquemes - RO', city: 'Cidade desconhecida' }), null);
+    const projects = [{ id: 1, location: 'Ariquemes - RO' }, { id: 2, location: 'Cacaulândia - RO' }];
+    assert.deepEqual(projectsInCity(projects, 'Cacaulândia').map(p => p.id), [2]);
+    assert.equal(projectsInCity(projects, 'Porto Velho').length, 0);
+    assert.equal(unitInCity('Ariquemes').id, 'matriz');
+    assert.equal(unitInCity('Vilhena'), undefined);
+});

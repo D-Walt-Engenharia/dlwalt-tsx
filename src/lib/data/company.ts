@@ -14,6 +14,7 @@ export const COMPANY_INFO = {
     units: [
         {
             id: "matriz",
+            city: "Ariquemes",
             name: "Matriz - Ariquemes",
             address: "Avenida Hugo Frey, 4752 (esquina com Rua Fernando Pessoa), Bom Jesus, Ariquemes - RO",
             phone: "(69) 99369-5702",
@@ -22,6 +23,7 @@ export const COMPANY_INFO = {
         },
         {
             id: "porto-velho",
+            city: "Porto Velho",
             name: "Unidade Porto Velho",
             address: "R. Mte. Gabriel, 5368 - Flodoaldo Pontes Pinto, Porto Velho - RO, 76820-620",
             phone: "(69) 99369-5702",
@@ -30,6 +32,7 @@ export const COMPANY_INFO = {
         },
         {
             id: "rolim-de-moura",
+            city: "Rolim de Moura",
             name: "Unidade Rolim de Moura",
             address: "Av. 25 de Agosto - Centro, Rolim de Moura - RO, 76940-000",
             phone: "(69) 99369-5702",
