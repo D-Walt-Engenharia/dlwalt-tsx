@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import styles from './HomePremium.module.css';
-const clip = '/home-modelo01-drone-v2.mp4';
+const clip = '/api/home-animation?v=modelo01-v2';
 
 export function HomeMotion() {
   const video = useRef<HTMLVideoElement>(null);
