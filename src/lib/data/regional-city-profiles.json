@@ -1,0 +1,493 @@
+{
+  "Alta Floresta D'Oeste": {
+    "references": [
+      "Alta Floresta D’Oeste",
+      "RO-383"
+    ],
+    "access": "A RO-383 liga Alta Floresta D’Oeste à região de Rolim de Moura. Informe o endereço e o acesso ao imóvel para conversar sobre o atendimento.",
+    "arrival": "Se o imóvel ficar fora da sede, envie a localização e identifique a entrada da propriedade. A avaliação e as condições da visita são combinadas com a equipe.",
+    "source": "https://rondonia.ro.gov.br/governo-conclui-servicos-de-recuperacao-da-rodovia-383-entre-o-trevo-da-ro-490-e-o-municipio-de-alta-floresta-doeste/"
+  },
+  "Alto Alegre dos Parecis": {
+    "references": [
+      "Alto Alegre dos Parecis",
+      "RO-490",
+      "RO-383"
+    ],
+    "access": "O acesso a Alto Alegre dos Parecis tem a RO-490 como referência, a partir da RO-383. Na solicitação, informe a localização e como chegar ao imóvel.",
+    "arrival": "Identifique a linha ou o travessão, quando houver, e envie a conta de energia. A equipe confirma a avaliação e as condições de deslocamento.",
+    "source": "https://rondonia.ro.gov.br/governo-conclui-servicos-de-recuperacao-da-rodovia-383-entre-o-trevo-da-ro-490-e-o-municipio-de-alta-floresta-doeste/"
+  },
+  "Alto Paraíso": {
+    "references": [
+      "Alto Paraíso",
+      "RO-459",
+      "BR-364"
+    ],
+    "access": "A RO-459 faz a ligação da região de Alto Paraíso com a BR-364. Envie o endereço do seu imóvel para conversar sobre a avaliação.",
+    "arrival": "No pedido de atendimento, informe se o acesso parte da rodovia ou de uma linha rural. A localização e um ponto de referência ajudam a organizar o agendamento.",
+    "source": "https://rondonia.ro.gov.br/der/institucional/enderecos-das-residencias-regionais/"
+  },
+  "Alvorada D'Oeste": {
+    "references": [
+      "Alvorada D'Oeste",
+      "BR-429"
+    ],
+    "access": "Alvorada D'Oeste integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de Alvorada D'Oeste ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "Ariquemes": {
+    "references": [
+      "Bom Jesus",
+      "Av. Hugo Frey",
+      "Rua Fernando Pessoa"
+    ],
+    "access": "O Bom Jesus é um dos bairros de Ariquemes. Na solicitação de atendimento, informe o bairro e a localização do seu imóvel.",
+    "arrival": "Envie a conta de energia, o endereço do imóvel e uma referência do acesso para planejar a avaliação.",
+    "source": "https://www.camaradeariquemes.ro.gov.br/navegacao/ariquemes"
+  },
+  "Buritis": {
+    "references": [
+      "Buritis",
+      "RO-460",
+      "BR-421"
+    ],
+    "access": "A RO-460 liga Buritis ao eixo da BR-421. A localização do imóvel e a referência da entrada ajudam a equipe a planejar o atendimento.",
+    "arrival": "Para seu orçamento em Buritis, envie a conta de energia e o endereço. Se estiver em área rural, informe a linha e o acesso à propriedade.",
+    "source": "https://rondonia.ro.gov.br/der/institucional/enderecos-das-residencias-regionais/"
+  },
+  "Cabixi": {
+    "references": [
+      "Cabixi",
+      "RO-370"
+    ],
+    "access": "A RO-370 é uma referência na ligação de Cabixi com a região. Converse com a equipe sobre o endereço do imóvel e o acesso para a avaliação.",
+    "arrival": "Para solicitar atendimento em Cabixi, envie a conta de energia e a localização. Em área rural, acrescente a linha, o travessão ou a entrada utilizada na propriedade.",
+    "source": "https://rondonia.ro.gov.br/ro-370-governo-recupera-trecho-entre-cerejeiras-e-corumbiara/"
+  },
+  "Cacaulândia": {
+    "references": [
+      "Cacaulândia",
+      "RO-140",
+      "Acesso pela BR-364"
+    ],
+    "access": "A RO-140 liga Cacaulândia à BR-364.",
+    "arrival": "Para imóveis rurais, informe a linha, o travessão ou a entrada da propriedade.",
+    "source": "https://rondonia.ro.gov.br/departamento-de-estradas-de-rodagem-recupera-rodovia-que-liga-cacaulandia-a-br-364/"
+  },
+  "Cacoal": {
+    "references": [
+      "Cacoal",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Cacoal. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Cacoal, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Campo Novo de Rondônia": {
+    "references": [
+      "Campo Novo de Rondônia",
+      "BR-421"
+    ],
+    "access": "A BR-421 é uma referência na ligação de Campo Novo de Rondônia com a região de Ariquemes. Informe o endereço e a entrada do imóvel ao conversar com a equipe.",
+    "arrival": "Para o atendimento em Campo Novo de Rondônia, envie a conta de energia, a localização e uma referência. Em propriedades rurais, identifique também a linha ou o travessão.",
+    "source": "https://rondonia.ro.gov.br/empresa-trabalha-nos-alicerces-da-nova-ponte-de-concreto-no-rio-jamari-em-ariquemes/"
+  },
+  "Candeias do Jamari": {
+    "references": [
+      "Candeias do Jamari",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Candeias do Jamari. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Candeias do Jamari, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Castanheiras": {
+    "references": [
+      "Castanheiras",
+      "RO-135",
+      "RO-267"
+    ],
+    "access": "Na região de Castanheiras, a RO-135 e a ligação com a RO-267 são referências de acesso. Envie a localização para orientar a avaliação do imóvel.",
+    "arrival": "Ao conversar com a equipe, informe o bairro ou a linha rural e a entrada da propriedade. A conta de energia ajuda a entender o consumo antes da proposta.",
+    "source": "https://rondonia.ro.gov.br/servico-de-manutencao-em-33-quilometros-da-ro-135-e-concluido-na-regiao-de-alvorada-do-oeste/"
+  },
+  "Cerejeiras": {
+    "references": [
+      "Cerejeiras",
+      "RO-370"
+    ],
+    "access": "A RO-370 é uma referência na ligação de Cerejeiras com a região. Converse com a equipe sobre o endereço do imóvel e o acesso para a avaliação.",
+    "arrival": "Para solicitar atendimento em Cerejeiras, envie a conta de energia e a localização. Em área rural, acrescente a linha, o travessão ou a entrada utilizada na propriedade.",
+    "source": "https://rondonia.ro.gov.br/ro-370-governo-recupera-trecho-entre-cerejeiras-e-corumbiara/"
+  },
+  "Chupinguaia": {
+    "references": [
+      "Chupinguaia",
+      "RO-391",
+      "BR-364"
+    ],
+    "access": "A RO-391 faz a ligação entre a BR-364 e Chupinguaia. Na solicitação de atendimento, envie a localização e uma referência para chegar ao imóvel.",
+    "arrival": "Em propriedades rurais, identifique a linha ou a entrada e envie a conta de energia. O agendamento e as condições da visita são combinados com a equipe.",
+    "source": "https://rondonia.ro.gov.br/der/institucional/enderecos-das-residencias-regionais/"
+  },
+  "Colorado do Oeste": {
+    "references": [
+      "Colorado do Oeste",
+      "RO-370"
+    ],
+    "access": "A RO-370 é uma referência na ligação de Colorado do Oeste com a região. Converse com a equipe sobre o endereço do imóvel e o acesso para a avaliação.",
+    "arrival": "Para solicitar atendimento em Colorado do Oeste, envie a conta de energia e a localização. Em área rural, acrescente a linha, o travessão ou a entrada utilizada na propriedade.",
+    "source": "https://rondonia.ro.gov.br/ro-370-governo-recupera-trecho-entre-cerejeiras-e-corumbiara/"
+  },
+  "Corumbiara": {
+    "references": [
+      "Corumbiara",
+      "RO-370"
+    ],
+    "access": "A RO-370 é uma referência na ligação de Corumbiara com a região. Converse com a equipe sobre o endereço do imóvel e o acesso para a avaliação.",
+    "arrival": "Para solicitar atendimento em Corumbiara, envie a conta de energia e a localização. Em área rural, acrescente a linha, o travessão ou a entrada utilizada na propriedade.",
+    "source": "https://rondonia.ro.gov.br/ro-370-governo-recupera-trecho-entre-cerejeiras-e-corumbiara/"
+  },
+  "Costa Marques": {
+    "references": [
+      "Costa Marques",
+      "BR-429"
+    ],
+    "access": "Costa Marques integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de Costa Marques ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "Cujubim": {
+    "references": [
+      "Cujubim",
+      "RO-205",
+      "BR-364"
+    ],
+    "access": "A ligação da BR-364 a Cujubim passa pela RO-205. Converse com a equipe e envie a localização do imóvel para organizar a avaliação.",
+    "arrival": "Informe se o imóvel fica na sede ou em uma linha rural de Cujubim. A conta de energia e uma referência de acesso orientam o atendimento.",
+    "source": "https://rondonia.ro.gov.br/der/institucional/enderecos-das-residencias-regionais/"
+  },
+  "Espigão D'Oeste": {
+    "references": [
+      "Espigão D’Oeste",
+      "RO-387",
+      "BR-364"
+    ],
+    "access": "A RO-387 é a ligação entre a BR-364 e Espigão D’Oeste. Envie o endereço e o ponto de referência do seu imóvel para iniciar o atendimento.",
+    "arrival": "Se a instalação ficar fora da sede urbana, informe a localização, a estrada de acesso e a entrada da propriedade para combinar a avaliação.",
+    "source": "https://rondonia.ro.gov.br/der/institucional/enderecos-das-residencias-regionais/"
+  },
+  "Governador Jorge Teixeira": {
+    "references": [
+      "Governador Jorge Teixeira",
+      "RO-463",
+      "Ligação com Jaru"
+    ],
+    "access": "A RO-463 liga Governador Jorge Teixeira a Jaru e dá acesso a linhas da região. Envie a localização do imóvel para organizar a avaliação.",
+    "arrival": "Na solicitação, informe o distrito, o bairro ou a linha rural e uma referência da entrada. A conta de energia ajuda na análise inicial do consumo.",
+    "source": "https://rondonia.ro.gov.br/der-executa-manutencao-na-ro-463-que-liga-jaru-a-governador-jorge-teixeira/"
+  },
+  "Guajará-Mirim": {
+    "references": [
+      "Guajará-Mirim",
+      "BR-425"
+    ],
+    "access": "A BR-425 integra a ligação de Guajará-Mirim com a BR-364. Para planejar o atendimento na região, envie a localização e a referência de acesso ao imóvel.",
+    "arrival": "Informe o bairro, o distrito ou a linha rural em Guajará-Mirim. A conta de energia e o endereço ajudam a equipe a organizar a análise e combinar as condições da visita.",
+    "source": "https://rondonia.ro.gov.br/governo-leva-pacote-de-obras-para-nova-mamore-e-regiao-3/"
+  },
+  "Itapuã do Oeste": {
+    "references": [
+      "Itapuã do Oeste",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Itapuã do Oeste. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Itapuã do Oeste, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Jaru": {
+    "references": [
+      "Jaru",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Jaru. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Jaru, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Ji-Paraná": {
+    "references": [
+      "Ji-Paraná",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Ji-Paraná. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Ji-Paraná, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Machadinho D'Oeste": {
+    "references": [
+      "Machadinho D'Oeste",
+      "RO-133"
+    ],
+    "access": "A RO-133 integra a ligação de Machadinho D'Oeste com Vale do Anari e Theobroma. Envie a localização para combinar o atendimento.",
+    "arrival": "Informe se o imóvel está na sede de Machadinho D'Oeste ou em uma linha rural. Identifique o acesso e envie a conta de energia para orientar a avaliação inicial.",
+    "source": "https://rondonia.ro.gov.br/usina-de-asfalto-do-der-em-jaru-finaliza-manutencao-de-142-quilometros-na-rodovia-133%E2%A0%80/"
+  },
+  "Ministro Andreazza": {
+    "references": [
+      "Ministro Andreazza",
+      "RO-471"
+    ],
+    "access": "A RO-471 é uma referência de acesso em Ministro Andreazza. Informe a localização do imóvel e a entrada utilizada para planejar a avaliação.",
+    "arrival": "Se o imóvel ficar em uma linha rural, acrescente o nome da linha e uma referência da propriedade. Envie também a conta de energia para a análise inicial.",
+    "source": "https://rondonia.ro.gov.br/manutencao-asfaltica-fortalece-condicoes-de-trafego-na-ro-471-em-ministro-andreazza/"
+  },
+  "Mirante da Serra": {
+    "references": [
+      "Mirante da Serra",
+      "RO-470"
+    ],
+    "access": "A RO-470 é uma referência na ligação de Mirante da Serra com a região de Ouro Preto do Oeste. Informe a localização do imóvel para organizar o atendimento.",
+    "arrival": "Em Mirante da Serra, identifique o bairro ou a linha rural e a entrada da propriedade. A conta de energia e as informações de acesso ajudam na avaliação inicial.",
+    "source": "https://rondonia.ro.gov.br/der-executa-manutencao-em-mais-de-100-quilometros-de-estradas-na-regiao-de-ouro-preto-do-oeste/"
+  },
+  "Monte Negro": {
+    "references": [
+      "Monte Negro",
+      "BR-421"
+    ],
+    "access": "A BR-421 é uma referência na ligação de Monte Negro com a região de Ariquemes. Informe o endereço e a entrada do imóvel ao conversar com a equipe.",
+    "arrival": "Para o atendimento em Monte Negro, envie a conta de energia, a localização e uma referência. Em propriedades rurais, identifique também a linha ou o travessão.",
+    "source": "https://rondonia.ro.gov.br/empresa-trabalha-nos-alicerces-da-nova-ponte-de-concreto-no-rio-jamari-em-ariquemes/"
+  },
+  "Nova Brasilândia D'Oeste": {
+    "references": [
+      "Nova Brasilândia D’Oeste",
+      "RO-010",
+      "Migrantinópolis"
+    ],
+    "access": "A RO-010 liga Nova Brasilândia D’Oeste à região de Migrantinópolis. Na solicitação de atendimento, informe o endereço e como chegar ao imóvel.",
+    "arrival": "Envie a conta de energia, a localização e uma referência de acesso. Se o imóvel ficar em uma linha rural, identifique a linha e a entrada da propriedade.",
+    "source": "https://rondonia.ro.gov.br/departamento-de-estradas-de-rodagem-recupera-trecho-da-ro-010-de-migrantinopolis-a-nova-brasilandia/"
+  },
+  "Nova Mamoré": {
+    "references": [
+      "Nova Mamoré",
+      "BR-425"
+    ],
+    "access": "A BR-425 integra a ligação de Nova Mamoré com a BR-364. Para planejar o atendimento na região, envie a localização e a referência de acesso ao imóvel.",
+    "arrival": "Informe o bairro, o distrito ou a linha rural em Nova Mamoré. A conta de energia e o endereço ajudam a equipe a organizar a análise e combinar as condições da visita.",
+    "source": "https://rondonia.ro.gov.br/governo-leva-pacote-de-obras-para-nova-mamore-e-regiao-3/"
+  },
+  "Nova União": {
+    "references": [
+      "Nova União",
+      "RO-470"
+    ],
+    "access": "A RO-470 é uma referência na ligação de Nova União com a região de Ouro Preto do Oeste. Informe a localização do imóvel para organizar o atendimento.",
+    "arrival": "Em Nova União, identifique o bairro ou a linha rural e a entrada da propriedade. A conta de energia e as informações de acesso ajudam na avaliação inicial.",
+    "source": "https://rondonia.ro.gov.br/der-executa-manutencao-em-mais-de-100-quilometros-de-estradas-na-regiao-de-ouro-preto-do-oeste/"
+  },
+  "Novo Horizonte do Oeste": {
+    "references": [
+      "Novo Horizonte do Oeste",
+      "RO-135",
+      "RO-010"
+    ],
+    "access": "Novo Horizonte do Oeste tem a RO-135 e a ligação com a RO-010 como referências de acesso. Identifique o endereço do imóvel para organizar o atendimento.",
+    "arrival": "Informe se a avaliação será na sede urbana ou em uma linha rural. Envie a localização e um ponto de referência para combinar o deslocamento.",
+    "source": "https://rondonia.ro.gov.br/servico-de-manutencao-em-33-quilometros-da-ro-135-e-concluido-na-regiao-de-alvorada-do-oeste/"
+  },
+  "Ouro Preto do Oeste": {
+    "references": [
+      "Ouro Preto do Oeste",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Ouro Preto do Oeste. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Ouro Preto do Oeste, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Parecis": {
+    "references": [
+      "Parecis",
+      "RO-492",
+      "RO-491"
+    ],
+    "access": "A RO-492 liga Parecis à região da RO-491. Para organizar uma avaliação, envie a localização do imóvel e a referência do acesso.",
+    "arrival": "Na solicitação em Parecis, identifique o bairro ou a linha rural. A conta de energia e as informações da cobertura orientam a primeira conversa.",
+    "source": "https://rondonia.ro.gov.br/der-executa-obras-de-manutencao-na-rodovia-492-nas-regioes-do-cafe-e-zona-da-mata/"
+  },
+  "Pimenta Bueno": {
+    "references": [
+      "Pimenta Bueno",
+      "BR-364"
+    ],
+    "access": "A BR-364 é uma referência de acesso a Pimenta Bueno. Ao solicitar atendimento para o seu imóvel, informe o bairro e a localização para a equipe organizar a avaliação.",
+    "arrival": "Em Pimenta Bueno, envie a conta de energia e o endereço completo. Se o acesso estiver fora da sede urbana, identifique a saída da rodovia e a entrada da propriedade.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/diretoria-de-planejamento-e-pesquisa-do-dnit-realiza-vistoria-tecnica-na-br-364-ro-para-estruturacao-do-projeto-de-duplicacao"
+  },
+  "Pimenteiras do Oeste": {
+    "references": [
+      "Pimenteiras do Oeste",
+      "BR-435",
+      "4º Eixo"
+    ],
+    "access": "A BR-435, também conhecida na região como 4º Eixo, é referência de acesso a Pimenteiras do Oeste. Informe a localização do imóvel para combinar o atendimento.",
+    "arrival": "Identifique o bairro ou a linha rural, a entrada da propriedade e envie a conta de energia. A equipe confirma a disponibilidade e as condições da avaliação.",
+    "source": "https://rondonia.ro.gov.br/assinada-ordem-de-servico-para-reinicio-do-asfaltamento-do-acesso-a-pimenteiras-com-investimento-de-r-325-milhoes/"
+  },
+  "Porto Velho": {
+    "references": [
+      "Porto Velho",
+      "Flodoaldo Pontes Pinto",
+      "Rua Mestre Gabriel"
+    ],
+    "access": "Flodoaldo Pontes Pinto é um bairro de Porto Velho. Informe em qual bairro fica o imóvel para orientar o atendimento na capital.",
+    "arrival": "Informe o bairro, o endereço e uma referência do imóvel para conversar sobre a avaliação.",
+    "source": "https://geoportal.portovelho.ro.gov.br/bairros/flodoaldo_pontes_pinto.html"
+  },
+  "Presidente Médici": {
+    "references": [
+      "Presidente Médici",
+      "BR-429"
+    ],
+    "access": "Presidente Médici integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de Presidente Médici ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "Primavera de Rondônia": {
+    "references": [
+      "Primavera de Rondônia",
+      "RO-494",
+      "RO-010"
+    ],
+    "access": "A RO-494 liga Primavera de Rondônia à RO-010. Envie o endereço e a referência da entrada do imóvel para orientar o atendimento.",
+    "arrival": "Para imóveis em linhas rurais, informe a linha e a localização da propriedade. A equipe avalia as informações de consumo e combina a próxima etapa.",
+    "source": "https://rondonia.ro.gov.br/der-executa-servicos-de-recuperacao-na-ro-494-regiao-de-primavera-de-rondonia/"
+  },
+  "Rio Crespo": {
+    "references": [
+      "Rio Crespo",
+      "RO-459",
+      "BR-364"
+    ],
+    "access": "A RO-459 faz a ligação entre Rio Crespo e a BR-364. Envie o endereço e a referência de entrada do imóvel para conversar sobre o atendimento.",
+    "arrival": "Se o imóvel ficar fora da sede, informe a linha ou o travessão e a localização da propriedade. A visita e as condições de deslocamento são combinadas com a equipe.",
+    "source": "https://rondonia.ro.gov.br/der-conclui-manutencao-na-ro-459-que-liga-rio-crespo-a-br-364/"
+  },
+  "Rolim de Moura": {
+    "references": [
+      "Rolim de Moura",
+      "Centro",
+      "Av. 25 de Agosto"
+    ],
+    "access": "A Avenida 25 de Agosto passa pelo Centro de Rolim de Moura. Informe o bairro e uma referência de acesso ao imóvel para conversar sobre o atendimento.",
+    "arrival": "Confirme a localização da unidade com a equipe antes da visita. Para atendimento no imóvel, envie a localização e um ponto de referência.",
+    "source": "https://rondonia.ro.gov.br/sine-estadual-de-rolim-de-moura-passa-a-operar-em-novo-endereco/"
+  },
+  "Santa Luzia D'Oeste": {
+    "references": [
+      "Santa Luzia D’Oeste",
+      "RO-383",
+      "Ligação com Rolim de Moura"
+    ],
+    "access": "A RO-383 liga Santa Luzia D’Oeste à região de Rolim de Moura. Informe o endereço do imóvel e o acesso para orientar o agendamento.",
+    "arrival": "Para imóveis em área rural, envie a localização e identifique a entrada da propriedade. A conta de energia e as características do local orientam a avaliação.",
+    "source": "https://rondonia.ro.gov.br/ro-383-entre-santa-luzia-doeste-e-rolim-de-moura-passa-por-manutencao-e-motoristas-devem-dirigir-com-atencao-redobrada/"
+  },
+  "São Felipe D'Oeste": {
+    "references": [
+      "São Felipe D’Oeste",
+      "RO-492",
+      "RO-491"
+    ],
+    "access": "São Felipe D’Oeste se conecta a Parecis pela RO-492, com a RO-491 como referência na região. Informe qual acesso atende o seu imóvel.",
+    "arrival": "Envie a localização, a linha ou o bairro e a conta de energia. A equipe combina o agendamento e as condições de atendimento para o seu endereço.",
+    "source": "https://rondonia.ro.gov.br/der-executa-obras-de-manutencao-na-rodovia-492-nas-regioes-do-cafe-e-zona-da-mata/"
+  },
+  "São Francisco do Guaporé": {
+    "references": [
+      "São Francisco do Guaporé",
+      "BR-429"
+    ],
+    "access": "São Francisco do Guaporé integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de São Francisco do Guaporé ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "São Miguel do Guaporé": {
+    "references": [
+      "São Miguel do Guaporé",
+      "BR-429"
+    ],
+    "access": "São Miguel do Guaporé integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de São Miguel do Guaporé ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "Seringueiras": {
+    "references": [
+      "Seringueiras",
+      "BR-429"
+    ],
+    "access": "Seringueiras integra o eixo da BR-429. Para combinar o atendimento na região, envie a localização do imóvel e uma referência de acesso.",
+    "arrival": "Informe se o imóvel fica na sede de Seringueiras ou em uma linha rural. A conta de energia e a identificação da entrada ajudam a planejar a avaliação e o deslocamento.",
+    "source": "https://www.gov.br/dnit/pt-br/assuntos/noticias/dnit-revitaliza-mais-de-10-km-na-br-429-em-rondonia"
+  },
+  "Teixeirópolis": {
+    "references": [
+      "Teixeirópolis",
+      "RO-473"
+    ],
+    "access": "A RO-473 é uma referência de acesso a Teixeirópolis. Para solicitar a avaliação, envie a localização e indique como chegar ao imóvel.",
+    "arrival": "Na zona rural, acrescente a linha ou a entrada da propriedade. A conta de energia e as informações do local orientam a proposta e o agendamento.",
+    "source": "https://rondonia.ro.gov.br/obra-na-ro-473-avanca-para-etapa-de-imprimacao-e-deve-melhorar-o-acesso-a-teixeiropolis/"
+  },
+  "Theobroma": {
+    "references": [
+      "Theobroma",
+      "RO-133"
+    ],
+    "access": "A RO-133 integra a ligação de Theobroma com Vale do Anari e Machadinho D’Oeste. Envie a localização para combinar o atendimento.",
+    "arrival": "Informe se o imóvel está na sede de Theobroma ou em uma linha rural. Identifique o acesso e envie a conta de energia para orientar a avaliação inicial.",
+    "source": "https://rondonia.ro.gov.br/usina-de-asfalto-do-der-em-jaru-finaliza-manutencao-de-142-quilometros-na-rodovia-133%E2%A0%80/"
+  },
+  "Urupá": {
+    "references": [
+      "Urupá",
+      "RO-473",
+      "RO-010"
+    ],
+    "access": "Urupá tem a RO-473 e a RO-010 como referências de acesso na região. Informe qual trajeto leva ao imóvel para conversar sobre a avaliação.",
+    "arrival": "Envie o endereço ou a localização da propriedade, a conta de energia e uma referência do acesso. As condições da visita são combinadas no atendimento.",
+    "source": "https://rondonia.ro.gov.br/wp-content/uploads/2022/07/SEI_0019.098304_2021_32.pdf"
+  },
+  "Vale do Anari": {
+    "references": [
+      "Vale do Anari",
+      "RO-133"
+    ],
+    "access": "A RO-133 integra a ligação de Vale do Anari com Machadinho D’Oeste e Theobroma. Envie a localização para combinar o atendimento.",
+    "arrival": "Informe se o imóvel está na sede de Vale do Anari ou em uma linha rural. Identifique o acesso e envie a conta de energia para orientar a avaliação inicial.",
+    "source": "https://rondonia.ro.gov.br/usina-de-asfalto-do-der-em-jaru-finaliza-manutencao-de-142-quilometros-na-rodovia-133%E2%A0%80/"
+  },
+  "Vale do Paraíso": {
+    "references": [
+      "Vale do Paraíso",
+      "RO-470",
+      "Distrito de Bom Jesus"
+    ],
+    "access": "Em Vale do Paraíso, a RO-470 também segue em direção ao distrito de Bom Jesus. Informe em qual localidade fica o imóvel para orientar o atendimento.",
+    "arrival": "Envie a conta de energia e a localização, com o distrito, a linha rural ou o bairro. A equipe confirma a avaliação e as condições de deslocamento.",
+    "source": "https://rondonia.ro.gov.br/manutencao-de-revestimento-primario-e-realizada-pelo-governo-de-ro-nas-ro-470-e-ro-010-na-regiao-central/"
+  },
+  "Vilhena": {
+    "references": [
+      "Vilhena",
+      "BR-364",
+      "BR-435"
+    ],
+    "access": "A BR-364 e seu entroncamento com a BR-435 são referências de acesso em Vilhena. Envie a localização do imóvel para conversar sobre o atendimento.",
+    "arrival": "Informe o bairro ou a localização rural e uma referência da entrada. A equipe avalia o consumo e combina a disponibilidade e as condições da visita.",
+    "source": "https://www.gov.br/antt/pt-br/assuntos/rodovias/novos-projetos-em-rodovias/bndes-cn1-centro-oeste-norte"
+  }
+}

@@ -26,6 +26,16 @@ export function projectsInCity(projects: PublicProject[], city: string): PublicP
     return projects.filter(project => projectCity(project) === city);
 }
 
+/** Keep every local project, including newly published works; label fallback examples by their real city. */
+export function regionalPortfolio(projects: PublicProject[], city: string) {
+    const localProjects = projectsInCity(projects, city);
+    return {
+        localProjects,
+        isLocal: localProjects.length > 0,
+        projects: localProjects.length ? localProjects : projects.filter(project => projectCity(project)).slice(0, 3),
+    };
+}
+
 export function unitInCity(city: string) {
     return COMPANY_INFO.units.find(unit => unit.city === city);
 }
