@@ -4,6 +4,9 @@ import { findRegionalPage, regionalPages } from "@/lib/regional-pages";
 import { ORGANIZATION_ID, SITE_URL } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { Metadata } from "next";
+import { regionalDescription } from "@/lib/regional-local-content";
+
+export const revalidate = 300;
 
 // Redirects are defined before the filesystem, keeping only canonical pages static.
 export function generateStaticParams() {
@@ -28,25 +31,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const { service, city, canonical } = data;
 
-    const title = `${service.title} em ${city} (RO) | Energia Solar DWalt`;
-    const description = `Economize com ${service.title} em ${city}. ${service.pain.split('?')[0]}? A DWalt oferece projetos de energia solar, instalação e manutenção. Peça um orçamento!`;
-    const keywords = [
-        "energia solar",
-        "placa solar",
-        "painel solar",
-        "economia de energia",
-        "dwalt energia",
-        service.title.toLowerCase(),
-        `energia solar em ${city.toLowerCase()}`,
-        `instalador solar ${city.toLowerCase()}`,
-        "rondonia",
-        "sustentabilidade"
-    ];
+    const title = `${service.title} em ${city} - RO | DWalt Energia`;
+    const description = regionalDescription(city, service);
 
     return {
         title,
         description,
-        keywords: keywords.join(", "),
         alternates: {
             canonical: `${SITE_URL}/${canonical}`,
         },
@@ -61,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 {
                     url: "/regional-casa-modelo01.webp",
                     width: 1400,
-                    height: 792,
+                    height: 788,
                     alt: "Imagem ilustrativa de uma casa com painéis solares",
                 },
             ],
@@ -89,11 +79,12 @@ export default async function LandingPage({ params }: Props) {
 
     const { service, city, canonical } = data;
 
-    const description = `Economize com ${service.title} em ${city}. ${service.pain.split('?')[0]}? A DWalt oferece projetos de energia solar, instalação e manutenção.`;
+    const description = regionalDescription(city, service);
 
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Service",
+        "@id": `${SITE_URL}/${canonical}#service`,
         "name": `${service.title} em ${city}`,
         "serviceType": service.title,
         "description": description,
@@ -102,5 +93,13 @@ export default async function LandingPage({ params }: Props) {
         "url": `${SITE_URL}/${canonical}`,
     };
 
-    return <><JsonLd data={jsonLd} /><RegionalLanding city={city} service={service} /></>;
+    const breadcrumb = {
+        '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Início', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'Cidades atendidas', item: `${SITE_URL}/areas-de-atendimento` },
+            { '@type': 'ListItem', position: 3, name: `${service.title} em ${city}`, item: `${SITE_URL}/${canonical}` },
+        ],
+    };
+    return <><JsonLd data={jsonLd} /><JsonLd data={breadcrumb} /><RegionalLanding city={city} service={service} /></>;
 }

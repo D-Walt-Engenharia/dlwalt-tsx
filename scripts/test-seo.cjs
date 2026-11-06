@@ -146,3 +146,51 @@ test('project evidence matches the city, accents and state without borrowing nea
     assert.equal(unitInCity('Ariquemes').id, 'matriz');
     assert.equal(unitInCity('Vilhena'), undefined);
 });
+
+test('every existing municipality has sourced access references and an honest contact type', () => {
+    const { RONDONIA_CITIES } = load('src/lib/constants/rondonia-cities.ts');
+    const profiles = load('src/lib/data/regional-city-profiles.json');
+    const { regionalCityProfile, regionalLocalCopy } = load('src/lib/regional-local-content.ts');
+    assert.deepEqual(Object.keys(profiles).sort(), [...RONDONIA_CITIES].sort());
+    for (const city of RONDONIA_CITIES) {
+        const profile = regionalCityProfile(city);
+        assert(profile.references.length >= 2, city);
+        assert(profile.access.trim().length > 0 && profile.arrival.trim().length > 0, city);
+        const source = new URL(profile.source);
+        assert(source.protocol === 'https:' && /(?:^|\.)(?:gov\.br|ro\.gov\.br)$/.test(source.hostname), city + ' primary source');
+        if (!['Ariquemes', 'Porto Velho', 'Rolim de Moura'].includes(city)) assert.equal(regionalLocalCopy(city).kicker, 'Atendimento regional', city);
+    }
+    assert(regionalCityProfile('Cacaulândia').references.includes('RO-140'));
+    assert(regionalCityProfile('Rio Crespo').references.includes('RO-459'));
+});
+
+test('new published local projects appear without a fixed selection and regional examples retain provenance', () => {
+    const { regionalPortfolio, projectCity } = load('src/lib/local-evidence.ts');
+    const projects = [
+        { id: 1, location: 'Ariquemes - RO' }, { id: 2, location: 'CACAULANDIA-RO' },
+        { id: 3, location: 'Condomínio Jardins, Ariquemes - RO' },
+        { id: 4, location: 'Ariquemes - RO' }, { id: 5, city: 'Ariquemes', location: 'Instalação nova' },
+        { id: 6, location: 'Local não informado' },
+    ];
+    const local = regionalPortfolio(projects, 'Ariquemes');
+    assert.equal(local.isLocal, true);
+    assert.deepEqual(local.projects.map(p => p.id), [1, 3, 4, 5]);
+    assert.deepEqual(local.projects.map(projectCity), Array(4).fill('Ariquemes'));
+    const regional = regionalPortfolio(projects, 'Vilhena');
+    assert.equal(regional.isLocal, false);
+    assert.equal(regional.localProjects.length, 0);
+    assert(regional.projects.every(p => projectCity(p) !== 'Vilhena' && p.id !== 6));
+    assert.equal(regionalPortfolio([], 'Vilhena').projects.length, 0);
+});
+
+test('regional descriptions match the service and city without generic savings promises', () => {
+    const { SOLAR_SERVICES } = load('src/lib/constants/services.ts');
+    const { regionalDescription } = load('src/lib/regional-local-content.ts');
+    const descriptions = SOLAR_SERVICES.map(service => regionalDescription('Cacaulândia', service));
+    assert.equal(new Set(descriptions).size, SOLAR_SERVICES.length);
+    for (const [index, description] of descriptions.entries()) {
+        assert(description.startsWith(SOLAR_SERVICES[index].title + ' em Cacaulândia, RO.'));
+        assert(description.includes('Atendimento regional sob agendamento.'));
+        assert(!/95%|100%|garantid|payback|comiss[oõ]es/i.test(description));
+    }
+});
