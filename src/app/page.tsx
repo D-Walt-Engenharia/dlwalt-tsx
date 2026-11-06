@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
+import { HomeHero } from "@/components/HomeHero";
+import styles from "@/components/HomePremium.module.css";
 import { Services } from "@/components/Services";
 import { About } from "@/components/About";
 import { Projects } from "@/components/Projects";
@@ -87,10 +88,10 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
+    <main id="dwalt-home" className={styles.home}>
       <JsonLd data={jsonLd} />
       <Header />
-      <Hero />
+      <HomeHero />
       <About />
       <Services />
       <Projects />
