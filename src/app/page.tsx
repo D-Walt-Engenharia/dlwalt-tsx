@@ -1,8 +1,7 @@
 import { Header } from "@/components/Header";
 import { HomeHero } from "@/components/HomeHero";
 import styles from "@/components/HomePremium.module.css";
-import { Services } from "@/components/Services";
-import { About } from "@/components/About";
+import { HomeAbout, HomeServices } from "@/components/HomeOverview";
 import { Projects } from "@/components/Projects";
 import { Testimonials } from "@/components/Testimonials";
 import { FAQ } from "@/components/FAQ";
@@ -92,8 +91,8 @@ export default function Home() {
       <JsonLd data={jsonLd} />
       <Header />
       <HomeHero />
-      <About />
-      <Services />
+      <HomeAbout />
+      <HomeServices />
       <Projects />
       <Testimonials />
       <FAQ />
