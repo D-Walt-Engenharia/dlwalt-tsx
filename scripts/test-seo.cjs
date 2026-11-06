@@ -32,13 +32,17 @@ function load(relative) {
 
 test('all 416 regional destinations and aliases are unique and equivalent', async () => {
     const { regionalPages, findRegionalPage } = load('src/lib/regional-pages.ts');
+    const { isRegionalRoute } = load('src/lib/regional-route.ts');
     const pages = regionalPages();
     assert.equal(pages.length, 416);
     assert.equal(new Set(pages.flatMap(p => [p.canonical, p.alias])).size, 832);
     for (const page of pages) {
+        assert.equal(isRegionalRoute('/' + page.canonical), true);
+        assert.equal(isRegionalRoute('/' + page.alias), true);
         assert.equal(findRegionalPage(page.alias).canonical, page.canonical);
         assert.equal(findRegionalPage(page.canonical).city, page.city);
     }
+    for (const route of ['/', '/simular-financiamento', '/solicitar-orcamento', '/projetos/1', '/blog', '/login', '/areas-de-atendimento']) assert.equal(isRegionalRoute(route), false);
     assert.equal(findRegionalPage('pagina-inexistente'), null);
     assert.equal(findRegionalPage('energia-solar-em-cujubim').canonical, 'energia-solar-em-cujubim-ro');
     assert.equal(findRegionalPage('energia-solar-em-ariquemes-ro').canonical, 'energia-solar-em-ariquemes');

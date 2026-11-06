@@ -1,5 +1,7 @@
 'use client';
 
+import { isRegionalRoute } from '@/lib/regional-route';
+
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import type Lenis from 'lenis';
@@ -7,6 +9,7 @@ import type Lenis from 'lenis';
 export const SmoothScroll = () => {
     const pathname = usePathname();
     useEffect(() => {
+        if (isRegionalRoute(pathname)) return;
         // Keep browser-native scrolling for the form and mobile keyboards.
         if (pathname === '/solicitar-orcamento' || pathname?.startsWith('/solicitar-orcamento/')) return;
         if (pathname === '/simular-financiamento' || pathname?.startsWith('/simular-financiamento/')) return;

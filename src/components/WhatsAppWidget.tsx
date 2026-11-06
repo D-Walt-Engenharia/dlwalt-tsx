@@ -1,5 +1,7 @@
 "use client";
 
+import { isRegionalRoute } from "@/lib/regional-route";
+
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -22,5 +24,7 @@ export function WhatsAppWidget() {
     if (pathname === "/solicitar-orcamento" || pathname?.startsWith("/solicitar-orcamento/")) return null;
     if (quoteState.pathname === pathname && quoteState.visible) return null;
     if (pathname === "/simular-financiamento" || pathname?.startsWith("/simular-financiamento/")) return null;
+    // The approved regional layout provides its own visible contact buttons.
+    if (isRegionalRoute(pathname)) return null;
     return <WhatsAppChat />;
 }
