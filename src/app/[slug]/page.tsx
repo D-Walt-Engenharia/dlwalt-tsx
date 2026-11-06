@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { findRegionalPage, regionalPages, regionalSlug } from "@/lib/regional-pages";
 import { ORGANIZATION_ID, SITE_URL } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
+import { LocalEvidence } from "@/components/LocalEvidence";
 import { Metadata } from "next";
 import { SOLAR_SERVICES } from "@/lib/constants/services";
 import { Button } from "@/components/ui/button";
@@ -173,7 +174,9 @@ export default async function LandingPage({ params }: Props) {
                 </div>
             </section>
 
-            {/* STATS SECTION - UNIQUE DATA */}
+            {service.slug !== 'afiliados' && <LocalEvidence city={city} />}
+
+            {/* STATS SECTION */}
             <section className="py-12 border-b border-white/5 bg-neutral-900/30">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

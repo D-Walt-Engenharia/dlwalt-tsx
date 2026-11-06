@@ -2,6 +2,8 @@ import { COMPANY_INFO } from "@/lib/data/company";
 
 import React from 'react';
 import { getPublicProject } from '@/lib/public-content';
+import { projectCity } from '@/lib/local-evidence';
+import { regionalSlug } from '@/lib/regional-pages';
 import { ORGANIZATION_ID, pageMetadata, SITE_URL } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
@@ -29,6 +31,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     const { id } = await params;
     const project = await getPublicProject(id);
     if (!project) notFound();
+    const city = projectCity(project);
 
     // Calculations based on kWp
     const kwp = parseFloat(String(project.kwp));
@@ -56,6 +59,12 @@ export default async function ProjectDetailPage({ params }: Props) {
                         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                         Voltar para projetos
                     </Link>
+
+                    {city && <nav aria-label="Navegação por cidade" className="mb-8 text-sm text-gray-300">
+                        <Link href="/areas-de-atendimento" className="hover:text-primary underline underline-offset-4">Cidades atendidas</Link>
+                        <span aria-hidden="true" className="mx-3">/</span>
+                        <Link href={`/${regionalSlug('energia-solar', city)}`} className="hover:text-primary underline underline-offset-4">Energia solar em {city}</Link>
+                    </nav>}
 
                     {/* Hero Section */}
                     <div className="grid lg:grid-cols-2 gap-12 mb-20">

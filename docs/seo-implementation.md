@@ -1,4 +1,4 @@
-# SEO técnico - primeira etapa
+# SEO técnico e evidências locais
 
 ## Comportamento publicado
 
@@ -16,7 +16,15 @@ O ID `G-B5TF6XMTWD` foi observado na interface autenticada da propriedade conect
 
 `generate_lead` é enviado apenas após a resposta do servidor confirmar um cadastro de financiamento e retornar um identificador. O evento não recebe dados do formulário; repetições do mesmo registro são evitadas no navegador. Cliques de WhatsApp continuam como interações, sem serem transformados em cadastro confirmado.
 
-A ativação do evento como evento principal e a confirmação de recebimento no GA4 ainda precisam ser verificadas na administração. Esta propriedade tem histórico de outro hostname; filtrar `www.dwalt.net` e `dwalt.net` nos relatórios do site. Não foi criado ou alterado um fluxo web ou uma propriedade pelo navegador.
+`generate_lead` foi cadastrado e marcado como evento principal na administração do GA4. A coleta de visitas do site foi confirmada no relatório em tempo real; o recebimento de um cadastro real ainda precisa ser observado. Esta propriedade tem histórico de outro hostname; filtrar `www.dwalt.net` e `dwalt.net` nos relatórios do site. Não foi criado ou alterado um fluxo web ou uma propriedade pelo navegador.
+
+## Evidências por cidade
+
+Páginas de serviço exibem até três projetos do portfólio público cuja cidade esteja identificada nos dados. A localização aceita os nomes de municípios de Rondônia, com variações de acento e sufixo de estado. Um campo explícito `city` tem prioridade: valores desconhecidos não recebem cidade por aproximação. Projetos sem localização reconhecida permanecem no portfólio, sem atribuição regional automática.
+
+As três unidades já cadastradas possuem um campo `city`, usado para mostrar contato e endereço somente na cidade correspondente. A página de afiliados não recebe esse bloco. Cada projeto com cidade reconhecida oferece um link de volta à página de energia solar daquela cidade. Os dados continuam vindo da API pública, com o intervalo de revalidação existente; não é necessário criar uma nova página para cada obra.
+
+Falhas temporárias do portfólio omitem os cartões de projetos da página regional. O conteúdo do serviço e o contato da unidade permanecem disponíveis. Nenhum projeto de outra cidade é usado para preencher uma região sem obras publicadas.
 
 ## Validação
 
@@ -27,4 +35,4 @@ A ativação do evento como evento principal e a confirmação de recebimento no
 
 ## Continuação editorial e de contas
 
-Ainda são necessários projetos documentados e materiais específicos para enriquecer cada cidade, medição geográfica de concorrentes e verificação do índice atual no Search Console. Ajustes dos perfis do Google, horários e validação de Rolim de Moura exigem acesso administrativo funcional e confirmação das informações reais de operação. Esta etapa não cria filiais, obras ou depoimentos.
+Ainda são necessários projetos documentados e materiais específicos para enriquecer as cidades sem obras no portfólio, medição geográfica de concorrentes e verificação do índice atual no Search Console. Endereços, horários e informações de operação devem refletir os dados reais confirmados pela empresa. Esta etapa não cria filiais, obras ou depoimentos.

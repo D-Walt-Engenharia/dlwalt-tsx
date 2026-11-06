@@ -5,6 +5,7 @@ export interface PublicProject {
     name: string;
     category: string;
     location: string;
+    city?: string;
     description: string;
     photos: string[];
     panelCount: number;
