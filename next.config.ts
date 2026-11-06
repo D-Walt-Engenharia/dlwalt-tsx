@@ -3,7 +3,7 @@ import { regionalPages } from './src/lib/regional-pages';
 
 const nextConfig: NextConfig = {
   async headers() {
-    return ['solar-roof-640', 'solar-roof-1280', 'dwalt-equipe-640', 'dwalt-equipe-960'].map(asset => ({
+    return ['solar-roof-640', 'solar-roof-1280', 'dwalt-equipe-640', 'dwalt-equipe-960', 'regional-casa-modelo01'].map(asset => ({
       source: `/${asset}.webp`,
       headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
     }));
