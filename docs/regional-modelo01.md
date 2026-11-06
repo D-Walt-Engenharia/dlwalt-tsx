@@ -14,7 +14,7 @@ As descrições de SEO respeitam o serviço e a cidade. `Service` descreve a ár
 
 ## Exibição e desempenho
 
-A imagem principal é ilustrativa e continua identificada assim. A versão móvel tem 34.806 bytes, prioridade alta e cache. As fotografias reais do portfólio usam carregamento sob demanda e otimização pelo Next quando a origem é suportada. Conteúdo, menu e perguntas são renderizados no servidor e permanecem disponíveis sem JavaScript. O controlador de animações só prepara blocos abaixo da tela e respeita movimento reduzido.
+A imagem principal é ilustrativa e continua identificada assim. A versão móvel tem 34.806 bytes, prioridade alta e cache. As fotografias reais carregam diretamente das URLs públicas do portfólio, sob demanda e com dimensões declaradas. Conteúdo, menu e perguntas são renderizados no servidor e permanecem disponíveis sem JavaScript. O controlador de animações só prepara blocos abaixo da tela e respeita movimento reduzido.
 
 O WhatsApp flutuante é um link nativo para o contato público, com contexto de serviço/cidade, sem dependências de chat e sem enviar mensagem sozinho. O rastreamento global existente continua reconhecendo os links de WhatsApp. A página reserva espaço lateral nas chamadas móveis.
 

@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { getAllContent, type PublicProject } from '@/lib/public-content';
 import { projectCity, regionalPortfolio, unitInCity } from '@/lib/local-evidence';
@@ -19,11 +18,10 @@ function ProjectCard({ project }: { project: PublicProject }) {
     const kwp = Number(project.kwp);
     const location = /cond[.\s]|condom[ií]nio/i.test(project.location) ? project.location : `${city} · RO`;
     const alt = `Foto do projeto ${project.name}, ${location}`;
-    const optimized = photo && (/^\/(?!\/)/.test(photo) || photo.startsWith('https://api.dwalt.net/'));
     return <article className={styles.projectCard} data-regional-reveal>
         <Link href={`/projetos/${project.id}`} className={styles.projectLink} aria-label={`Ver projeto ${project.name} em ${city}`}>
             <div className={styles.projectPhoto}>
-                {photo ? optimized ? <Image src={photo} alt={alt} fill quality={65} sizes="(max-width: 899px) calc(100vw - 44px), (max-width: 1180px) 50vw, 590px" loading="lazy" /> : <img src={photo} alt={alt} width={960} height={640} loading="lazy" decoding="async" /> : <div className={styles.projectPlaceholder}>Conheça os dados deste projeto no portfólio.</div>}
+                {photo ? <img src={photo} alt={alt} width={960} height={640} loading="lazy" decoding="async" /> : <div className={styles.projectPlaceholder}>Conheça os dados deste projeto no portfólio.</div>}
                 <span className={styles.projectCategory}>{project.category}</span>
                 {Number.isFinite(kwp) && kwp > 0 && <span className={styles.projectKwp}>{kwp.toLocaleString('pt-BR', { maximumFractionDigits: 2 })} <small>kWp</small></span>}
             </div>
