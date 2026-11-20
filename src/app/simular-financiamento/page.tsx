@@ -1,7 +1,7 @@
 'use client';
-import { trackConfirmedAnalyticsLead } from '@/lib/analytics';
+import { GA4_MEASUREMENT_ID, trackConfirmedAnalyticsLead } from '@/lib/analytics';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Briefcase, MapPin, ArrowRight, ArrowLeft, CheckCircle2, AlertCircle, Send, MessageCircle } from 'lucide-react';
@@ -15,6 +15,15 @@ import { trackContact } from '@/lib/tracking';
 
 type FinancingStep = 1 | 2 | 3;
 type ValidationError = ReturnType<typeof validateFinancingForm>;
+type FunnelEvent =
+    | 'financing_first_field_seen'
+    | 'financing_form_start'
+    | 'financing_income_step'
+    | 'financing_address_step'
+    | `financing_invalid_step_${FinancingStep}`
+    | 'financing_submit_attempt'
+    | 'financing_receipt_missing'
+    | 'financing_submit_error';
 
 const INITIAL_FORM_DATA: FinancingFormData = {
     fullName: '',
@@ -107,6 +116,31 @@ export default function FinancingSimulatorPage() {
     const successHeadingRef = useRef<HTMLHeadingElement>(null);
     const loadingHeadingRef = useRef<HTMLHeadingElement>(null);
     const submitErrorRef = useRef<HTMLDivElement>(null);
+    const reportedEvents = useRef(new Set<FunnelEvent>());
+
+    // Count milestones once per visit, including when the visitor goes back or retries.
+    const reportFunnelEvent = useCallback((event: FunnelEvent) => {
+        if (reportedEvents.current.has(event)) return;
+        try {
+            const browser = window as Window & { gtag?: (...args: unknown[]) => void };
+            if (typeof browser.gtag !== 'function') return;
+            browser.gtag('event', event, { send_to: GA4_MEASUREMENT_ID });
+            reportedEvents.current.add(event);
+        } catch { /* Optional measurement must never interrupt the form. */ }
+    }, []);
+
+    useEffect(() => {
+        const firstField = document.getElementById('energyBillValue');
+        if (!firstField || typeof IntersectionObserver === 'undefined') return;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.intersectionRatio >= 0.5) {
+                reportFunnelEvent('financing_first_field_seen');
+                observer.disconnect();
+            }
+        }, { threshold: 0.5 });
+        observer.observe(firstField);
+        return () => observer.disconnect();
+    }, [reportFunnelEvent]);
 
     // Focus the current step or its first error only after an intentional action.
     useEffect(() => {
@@ -152,6 +186,7 @@ export default function FinancingSimulatorPage() {
     });
 
     const showValidationError = (error: NonNullable<ValidationError>) => {
+        reportFunnelEvent(`financing_invalid_step_${error.step}`);
         focusPendingRef.current = true;
         setValidationError(error);
         setStep(error.step);
@@ -222,6 +257,7 @@ export default function FinancingSimulatorPage() {
         focusPendingRef.current = true;
         setValidationError(null);
         setSubmitError(null);
+        reportFunnelEvent(step === 1 ? 'financing_income_step' : 'financing_address_step');
         setStep(step === 1 ? 2 : 3);
     };
 
@@ -236,6 +272,7 @@ export default function FinancingSimulatorPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (submittingRef.current || isSubmitted) return;
+        reportFunnelEvent('financing_form_start');
         if (step !== 3) {
             handleNextStep();
             return;
@@ -247,6 +284,7 @@ export default function FinancingSimulatorPage() {
 
         // A ref closes the gap before React disables the button on the next render.
         submittingRef.current = true;
+        reportFunnelEvent('financing_submit_attempt');
         focusPendingRef.current = true;
         cepAbortRef.current?.abort();
         ++cepRequestRef.current;
@@ -259,6 +297,7 @@ export default function FinancingSimulatorPage() {
             const response = await api.post('/financial/credit-analysis', data, { timeout: 30000 });
             const receipt = getFinancingReceipt(response.data);
             if (!receipt) {
+                reportFunnelEvent('financing_receipt_missing');
                 focusPendingRef.current = true;
                 setSubmitError('O sistema não confirmou o registro. Seus dados continuam preenchidos. Entre em contato antes de reenviar.');
                 return;
@@ -278,6 +317,7 @@ export default function FinancingSimulatorPage() {
             }
         } catch {
             focusPendingRef.current = true;
+            reportFunnelEvent('financing_submit_error');
             setSubmitError('Não foi possível confirmar o envio. Seus dados continuam preenchidos. Entre em contato antes de reenviar para verificar se o cadastro foi recebido.');
         } finally {
             submittingRef.current = false;
@@ -392,7 +432,7 @@ export default function FinancingSimulatorPage() {
                                         </div>
                                     </div>
                                 )}
-                        <form onSubmit={handleSubmit} noValidate aria-busy={isLoading} aria-describedby="financing-purpose" className="space-y-8">
+                        <form onSubmit={handleSubmit} onChangeCapture={() => reportFunnelEvent('financing_form_start')} noValidate aria-busy={isLoading} aria-describedby="financing-purpose" className="space-y-8">
                             <fieldset disabled={isLoading} className="space-y-8 min-w-0">
 
                             {/* STEP 1: DADOS PESSOAIS */}
