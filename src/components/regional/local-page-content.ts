@@ -47,21 +47,30 @@ export function localPageQuestions(city: string, slug: string, evidence: Regiona
         answer: evidence.unit ? `Converse com a equipe pelo WhatsApp ou visite a DWalt em ${evidence.unit.address}.` : `Fale com a matriz em Ariquemes pelo WhatsApp para consultar o atendimento ao seu endereço em ${city}. ${profile.arrival}`,
     } : address;
     if (slug === 'instalacao-fotovoltaica' && city !== 'Rolim de Moura') return [contact, {
+        id: 'placa-solar-local',
+        question: `Procuro placa solar em ${city}. Como comparar as propostas?`,
+        answer: 'Compare a potência total em kWp, a geração mensal estimada e os serviços incluídos. Uma proposta instalada deve detalhar os módulos, o inversor, a montagem e quem cuida da homologação. Envie sua fatura e fotos do telhado para pedir esse detalhamento.',
+    }, {
         id: 'kit-solar',
         question: `O que conferir no orçamento de um kit de energia solar em ${city}?`,
         answer: 'Confira a quantidade e a potência dos módulos, o modelo do inversor, a estrutura de fixação e as proteções elétricas. Peça que a proposta detalhe os equipamentos, a instalação e as garantias de cada item. A escolha do conjunto depende do consumo e do espaço disponível no imóvel.',
     }, ...original.faq];
     if (!['energia-solar', 'energia-solar-residencial'].includes(slug)) return [contact, ...original.faq];
+    const installedPrice: LocalQuestion = {
+        id: 'preco-instalado',
+        question: `Quanto custa instalar energia solar em ${city}?`,
+        answer: 'O preço da placa é apenas uma parte do valor instalado. O consumo em kWh orienta a potência do sistema. O tipo de telhado, a fixação, o inversor e eventuais adequações elétricas também entram na proposta. Envie uma fatura recente e a localização do imóvel para receber o orçamento completo.',
+    };
     if (city === 'Cacaulândia') return [
         { question: 'A DWalt tem projeto publicado em Cacaulândia?', answer: evidence.localProjects.length ? `Sim. O portfólio inclui ${evidence.localProjects.map(p => p.name).join(' e ')}. Os cartões acima mostram as fotos e abrem os dados de cada projeto.` : 'Você pode consultar o portfólio da DWalt para conhecer as instalações publicadas e a cidade identificada em cada projeto.' },
-        { question: 'Quanto custa instalar placas solares em Cacaulândia?', answer: 'A proposta depende do consumo em kWh, da área útil do telhado, da instalação elétrica e do acesso ao imóvel. Envie uma conta de luz recente e a localização. Com esses dados, a equipe de Ariquemes pode estimar a potência e apresentar um orçamento para o seu endereço.' },
+        installedPrice,
         { question: 'Como solicitar uma visita em Cacaulândia?', answer: 'Converse com a equipe pelo WhatsApp, envie a conta de energia e a localização do imóvel. O agendamento, a disponibilidade e as condições da visita são combinados no atendimento.' },
         { question: 'Meu imóvel fica em uma linha rural. Como informar?', answer: 'Envie a localização e identifique a linha, o travessão ou uma referência de acesso à propriedade. Isso ajuda no planejamento da avaliação técnica.' },
         slug === 'energia-solar' ? contact : { question: 'Existe uma loja física da DWalt em Cacaulândia?', answer: 'Nesta página, o atendimento é regional e sob agendamento. O endereço de contato exibido é o da matriz em Ariquemes; ele não representa uma filial em Cacaulândia.' },
     ];
     const proof = evidence.localProjects.length ? { question: `Posso conhecer projetos realizados em ${city}?`, answer: `Sim. O portfólio publicado inclui ${evidence.localProjects.map(project => project.name).join(', ')}. Os cartões acima abrem as páginas desses projetos, com fotos e dados do sistema.` } : { question: `Que referência enviar para o atendimento em ${city}?`, answer: profile.arrival };
     return [contact, proof,
-        { question: `Quanto custa instalar energia solar em ${city}?`, answer: 'O valor depende do consumo, da potência necessária, da cobertura e das condições elétricas. Envie a conta de energia e o endereço para receber uma análise e uma proposta adequada ao seu imóvel.' },
+        city === 'Rolim de Moura' ? { question: `Quanto custa instalar energia solar em ${city}?`, answer: 'O valor depende do consumo, da potência necessária, da cobertura e das condições elétricas. Envie a conta de energia e o endereço para receber uma análise e uma proposta adequada ao seu imóvel.' } : installedPrice,
         { question: 'O que enviar para iniciar meu orçamento?', answer: `Envie a conta de energia, seu nome e o endereço do imóvel em ${city}. Fotos do telhado e do padrão de entrada também ajudam na avaliação inicial.` },
     ];
 }

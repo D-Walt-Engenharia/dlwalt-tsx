@@ -307,3 +307,22 @@ test('local buying questions use the correct service, city and available office'
         assert(localPageContent(city, 'energia-solar-residencial').benefitIntro.includes(city));
     }
 });
+
+test('price and panel searches respect service areas and the reviewed consumption examples', () => {
+    const { localPageQuestions } = load('src/components/regional/local-page-content.ts');
+    const { RONDONIA_CITIES } = load('src/lib/constants/rondonia-cities.ts');
+    const { MONTHLY_CONSUMPTION_EXAMPLES, estimateSolarArray } = load('src/lib/solar-constants.ts');
+    for (const city of RONDONIA_CITIES) {
+        const evidence = { localProjects: [] };
+        for (const [service, anchor] of [
+            ['energia-solar', 'preco-instalado'],
+            ['energia-solar-residencial', 'preco-instalado'],
+            ['instalacao-fotovoltaica', 'placa-solar-local'],
+        ]) {
+            const matches = localPageQuestions(city, service, evidence).filter(q => q.id === anchor);
+            assert.equal(matches.length, city === 'Rolim de Moura' ? 0 : 1, city);
+            if (matches.length) assert(matches[0].question.includes(city));
+        }
+    }
+    assert.deepEqual(MONTHLY_CONSUMPTION_EXAMPLES.map(kwh => estimateSolarArray(kwh).panels), [9, 14, 21]);
+});
