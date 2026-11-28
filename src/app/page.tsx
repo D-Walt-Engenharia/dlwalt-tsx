@@ -14,7 +14,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { COMPANY_INFO } from "@/lib/data/company";
 import { ORGANIZATION_ID, pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata("Energia Solar em Rondônia | DWalt Energia", "Projetos, instalação e manutenção de energia solar em Rondônia. Unidades em Ariquemes, Porto Velho e Rolim de Moura. Solicite seu orçamento.", "/");
+export const metadata = pageMetadata("Energia Solar em Rondônia | DWalt Energia", "Projetos, instalação e manutenção de energia solar em Rondônia. Unidades em Ariquemes e Porto Velho. Solicite seu orçamento.", "/");
 
 export default function Home() {
   const jsonLd = {

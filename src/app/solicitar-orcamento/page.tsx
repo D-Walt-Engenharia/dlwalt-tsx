@@ -30,7 +30,7 @@ export default function SolarQuotePage() {
             <div className={styles.landingContent}>
                 <p className={styles.eyebrow}>ENERGIA SOLAR PARA SEU IMÓVEL</p>
                 <h1 id="quote-heading" className={styles.headline}>Sua próxima conta<br />pode ser <span>mais leve.</span></h1>
-                <p className={styles.intro}>Peça uma proposta personalizada para sua casa ou empresa.</p>
+                <p className={styles.intro}>Quer saber quanto custa instalar energia solar? Informe o valor da sua conta para iniciar o orçamento. A equipe avalia o consumo e o telhado para detalhar as placas, o inversor e a instalação na proposta.</p>
                 <p className={styles.trust}>10 anos de história <span aria-hidden="true">·</span> Atendimento em Rondônia</p>
                 <QuoteWhatsAppForm />
                 <footer className={styles.landingFooter}>

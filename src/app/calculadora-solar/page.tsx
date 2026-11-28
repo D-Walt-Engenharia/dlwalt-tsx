@@ -6,7 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Sun, Zap, ArrowRight, Wallet, MapPin, BarChart3, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { irradiationData, ENERGY_PRICE, ENERGY_INFLATION } from '@/lib/solar-constants';
+import { ENERGY_PRICE, ENERGY_INFLATION, estimateSolarArray, REFERENCE_PANEL_WATTS, REFERENCE_SUN_HOURS, MONTHLY_CONSUMPTION_EXAMPLES } from '@/lib/solar-constants';
 import { redirectToWhatsApp } from '@/lib/whatsapp-quote';
 
 export default function SolarCalculatorPage() {
@@ -32,7 +32,7 @@ export default function SolarCalculatorPage() {
             .then((data) => {
                 if (data.city && data.region_code) {
                     const location = `${data.city}/${data.region_code}`;
-                    setCityUf(location);
+                    setCityUf(current => current || location);
                 }
             })
             .catch((err) => console.error("Erro ao obter localização", err))
@@ -49,16 +49,7 @@ export default function SolarCalculatorPage() {
             return;
         }
 
-        const uf = cityUf.split("/")[1] || "SP";
-        // Default to a median value if UF not found or not in map
-        const irradiation = 4.5 //irradiationData[uf] || 5.0;
-
-        // Cálculo do tamanho do sistema
-        // Fórmula básica: Consumo / 30 dias / Irradiação / Rendimento (0.80 padrão)
-        // O código do usuário usava kwh / 30 / irradiation. Vamos manter a lógica do usuário mas ajustando para um sistema real.
-        // Geralmente: (KwhMes / 30) / (Irradiacao * PerformanceRatio)
-        // User snippet: systemSizeVal = kwh / 30 / irradiation; 
-        const systemSizeVal = kwhValue / 30 / irradiation;
+        const { systemSize: systemSizeVal, panels: panelsVal } = estimateSolarArray(kwhValue);
 
         // Investimento Estimado (Baseado no snippet do usuário: kwh * 19.4?? Isso parece alto ou uma fórmula específica.
         // Geralmente custa ~R$ 3000-4000 por kWp.
@@ -121,13 +112,12 @@ export default function SolarCalculatorPage() {
         const paybackMonths = Math.round((paybackYearsVal - paybackYearsFloor) * 12);
         const formattedPayback = `${paybackYearsFloor} anos${paybackMonths > 0 ? ` e ${paybackMonths} meses` : ""}`;
 
-        // Número de painéis (estimativa 550W)
-        const panelsVal = Math.ceil(systemSizeVal / 0.55);
 
-        const simulationText = `Olá, fiz uma simulação no site.\n\n*Simulação realizada:*\n- Cidade/UF: ${cityUf}\n- Consumo mensal: ${kwhValue} kWh\n- Sistema Estimado: ${systemSizeVal.toFixed(2)} kWp\n- Economia Mensal: ${formattedMonthlySavings}\n- Retorno (Payback): ${formattedPayback}\n- Economia Total (25 anos): ${formattedTotalSavings}`;
+
+        const simulationText = `Olá, fiz uma simulação no site.\n\n*Simulação realizada:*\n- Cidade/UF: ${cityUf}\n- Consumo mensal: ${kwhValue} kWh\n- Placas estimadas: ${panelsVal} de ${REFERENCE_PANEL_WATTS} W\n- Sistema Estimado: ${systemSizeVal.toFixed(2)} kWp\n- Economia Mensal: ${formattedMonthlySavings}\n- Retorno (Payback): ${formattedPayback}\n- Economia Total (25 anos): ${formattedTotalSavings}`;
 
         setResult({
-            irradiation: irradiation.toFixed(2),
+            irradiation: REFERENCE_SUN_HOURS.toFixed(2),
             systemSize: systemSizeVal.toFixed(2),
             investment: formattedInvestment,
             monthlySavings: formattedMonthlySavings,
@@ -170,7 +160,7 @@ export default function SolarCalculatorPage() {
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-300">Energia Solar</span>
                         </h1>
                         <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-                            Descubra em quanto tempo seu sistema se paga e quanto você vai lucrar nos próximos 25 anos.
+                            Use o consumo da sua conta de luz para estimar quantas placas precisa e comparar o investimento com a economia projetada.
                         </p>
                     </div>
 
@@ -188,14 +178,14 @@ export default function SolarCalculatorPage() {
                                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                                         <input
                                             type="text"
-                                            value={isLoadingLocation ? "Localizando..." : cityUf}
-                                            onChange={(e) => setCityUf(e.target.value)}
-                                            placeholder="Ex: Porto Velho/RO"
+                                            value={cityUf}
+                                            onChange={(e) => { setCityUf(e.target.value); setResult(null); }}
+                                            placeholder={isLoadingLocation ? "Localizando…" : "Ex.: Porto Velho/RO"}
                                             className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
                                             required
                                         />
                                     </div>
-                                    <p className="text-xs text-gray-500">Detectamos sua localização para dados de irradiação solar mais precisos.</p>
+                                    <p className="text-xs text-gray-500">Informe a cidade do imóvel para que a equipe possa preparar a proposta.</p>
                                 </div>
 
                                 <div className="space-y-2">
@@ -205,7 +195,7 @@ export default function SolarCalculatorPage() {
                                         <input
                                             type="number"
                                             value={kwh}
-                                            onChange={(e) => setKwh(Number(e.target.value))}
+                                            onChange={(e) => { setKwh(e.target.value ? Number(e.target.value) : ''); setResult(null); }}
                                             placeholder="Ex: 500"
                                             className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
                                             required
@@ -213,6 +203,20 @@ export default function SolarCalculatorPage() {
                                         />
                                     </div>
                                     <p className="text-xs text-gray-500">Verifique este valor na sua conta de luz.</p>
+                                    <fieldset id="consumo-em-kwh" className="scroll-mt-24 space-y-2">
+                                        <legend className="font-medium">Qual kit de energia solar atende ao meu consumo mensal?</legend>
+                                        <p className="text-sm text-gray-300">Escolha o kit com o consumo mais próximo da média da sua fatura ou digite outro valor acima. A estimativa usa módulos de {REFERENCE_PANEL_WATTS} W e {REFERENCE_SUN_HOURS.toLocaleString('pt-BR')} horas de sol pleno por dia. Sombra, orientação do telhado e perdas alteram a geração real.</p>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            {MONTHLY_CONSUMPTION_EXAMPLES.map(consumption => (
+                                                <button key={consumption} id={`kit-${consumption}-kwh`} type="button" aria-pressed={kwh === consumption}
+                                                    className="rounded-lg border border-white/30 px-3 py-2 text-sm aria-pressed:border-primary"
+                                                    onClick={() => { setKwh(consumption); setResult(null); }}>
+                                                    <span className="block font-medium">Kit de {consumption.toLocaleString('pt-BR')} kWh/mês</span>
+                                                    <span className="text-gray-300">Cerca de {estimateSolarArray(consumption).panels} placas</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </fieldset>
                                 </div>
 
                                 <Button type="submit" size="lg" className="w-full h-14 text-lg font-bold rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 transition-opacity text-white">

@@ -1,10 +1,9 @@
-'use client';
-
 import React from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import OfficeCard from '@/components/OfficeCard';
 import { COMPANY_INFO } from '@/lib/data/company';
+import { regionalSlug } from '@/lib/regional-pages';
 import { MapPin } from 'lucide-react';
 
 export default function UnitsPage() {
@@ -33,9 +32,9 @@ export default function UnitsPage() {
 
                 <section className="py-16 bg-black">
                     <div className="container mx-auto px-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                             {COMPANY_INFO.units.map(unit => (
-                                <OfficeCard key={unit.id} unit={unit} />
+                                <OfficeCard key={unit.id} unit={unit} cityHref={`/${regionalSlug('energia-solar', unit.city)}`} />
                             ))}
                         </div>
                     </div>

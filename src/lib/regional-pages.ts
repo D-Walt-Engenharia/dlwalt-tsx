@@ -10,6 +10,17 @@ export function regionalSlug(serviceSlug: string, city: string): string {
     return preferredWithState.has(`${base}-ro`) ? `${base}-ro` : base;
 }
 
+export function regionalBreadcrumbs(city: string, service: { slug: string; title: string }, canonical: string) {
+    const links = [
+        { name: 'Início', href: '/' },
+        { name: 'Cidades atendidas', href: '/areas-de-atendimento' },
+    ];
+    if (service.slug !== 'energia-solar') {
+        links.push({ name: `Energia solar em ${city}`, href: '/' + regionalSlug('energia-solar', city) });
+    }
+    return [...links, { name: `${service.title} em ${city}`, href: '/' + canonical }];
+}
+
 export function regionalPages() {
     return SOLAR_SERVICES.flatMap(service => RONDONIA_CITIES.map(city => {
         const base = `${service.slug}-em-${slugify(city)}`;

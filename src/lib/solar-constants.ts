@@ -8,3 +8,14 @@ export const irradiationData: Record<string, number> = {
     'RJ': 5.0, 'RN': 5.6, 'RS': 4.6, 'RO': 4.8, 'RR': 5.0, 'SC': 4.5,
     'SP': 4.9, 'SE': 5.4, 'TO': 5.2
 };
+
+// Keep the illustrative examples and the interactive calculator on the same assumptions.
+export const REFERENCE_SUN_HOURS = 4.5;
+export const REFERENCE_PANEL_WATTS = 550;
+export const MONTHLY_CONSUMPTION_EXAMPLES = [500, 600, 800, 900, 1000, 1200, 1500, 1800, 2000] as const;
+
+export function estimateSolarArray(monthlyKwh: number) {
+    const systemSize = monthlyKwh / (30 * REFERENCE_SUN_HOURS);
+    const panels = Math.ceil(systemSize / (REFERENCE_PANEL_WATTS / 1000));
+    return { systemSize, panels };
+}

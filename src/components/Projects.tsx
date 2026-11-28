@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getAllContent, type PublicProject } from '@/lib/public-content';
 
+import { projectCity } from '@/lib/local-evidence';
+import { regionalSlug } from '@/lib/regional-pages';
+
 export type Project = PublicProject;
 
 export async function Projects() {
@@ -13,6 +16,7 @@ export async function Projects() {
         return null;
     }
 
+    const cities = [...new Set(projects.map(projectCity).filter((city): city is string => Boolean(city)))];
     return (
         <section id="projects" className="py-24 bg-black text-white overflow-hidden">
             <div className="container mx-auto px-4">
@@ -69,6 +73,9 @@ export async function Projects() {
                         </Link>
                     ))}
                 </div>
+                {cities.length > 0 && <nav aria-label="Atendimento nas cidades destes projetos" className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
+                    {cities.map(city => <Link key={city} href={`/${regionalSlug('energia-solar', city)}`} className="text-primary underline underline-offset-4">Energia solar em {city}</Link>)}
+                </nav>}
             </div>
         </section>
     );
