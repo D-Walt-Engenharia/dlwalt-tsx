@@ -150,8 +150,8 @@
 .page .floatingWhatsapp:hover{transform:translateY(-3px);background:#20ef7f}
 .page .whatsappTooltip{position:absolute;right:70px;background:#13291c;border:1px solid #2f4a36;color:#edfbf1;padding:9px 13px;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
 .page .floatingWhatsapp:hover .whatsappTooltip,.page .floatingWhatsapp:focus-visible .whatsappTooltip{opacity:1}
-.page .reveal[data-reveal-state=pending]{opacity:0;transform:translateY(16px)}
-.page .reveal{transition:opacity .55s ease,transform .55s ease}
+@keyframes regionalEntrance{from{opacity:.45;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page [data-regional-reveal][data-reveal-state=visible]{animation:regionalEntrance .5s ease-out}
 @media(min-width:900px) and (max-width:1140px){.page .wrap{width:calc(100% - 60px)}
 .page .desktopNav{gap:20px}
 .page .heroCopy{width:56%}
@@ -314,10 +314,9 @@
 }
 @media(prefers-reduced-motion:reduce){:global(html):has(.page){scroll-behavior:auto}
 .page *,.page *:before,.page *:after{animation:none!important;transition:none!important}
-.page .reveal[data-reveal-state=pending]{opacity:1;transform:none}
 }
 @media print{.page .floatingWhatsapp,.page .mobileMenu,.page .desktopNav{display:none}
-.page .reveal{opacity:1!important;transform:none!important}
+.page [data-regional-reveal]{animation:none!important;opacity:1!important;transform:none!important}
 .page .projectCard,.page .addressCard{break-inside:avoid}
 }
 
@@ -336,3 +335,15 @@
 .page .breadcrumbs{display:flex;flex-wrap:wrap;gap:7px;font-size:10px;color:#8aab96;margin-top:25px}
 .page .breadcrumbs a:hover{color:var(--green)}
 @media(max-width:899px){.page .breadcrumbs{font-size:9px;padding-right:50px}.page .moreServices{padding-right:50px}.page .heroCopy{min-width:0}.page h1{overflow-wrap:break-word}.page .heroImage picture{display:block}}
+
+.page .districtText strong{display:block;color:var(--text);margin-bottom:.25rem}
+.page .solarFacts{grid-column:1/-1;border-top:1px solid var(--line);padding-top:24px;max-width:920px}
+.page .solarFacts h3{font-size:clamp(1.12rem,2.1vw,1.55rem);line-height:1.3}
+.page .solarFacts p{font-size:.9rem;line-height:1.6;color:var(--muted);margin:7px 0 16px}
+.page .solarFacts dl{display:flex;flex-wrap:wrap;gap:12px 34px;margin:0}
+.page .solarFacts dl div{display:flex;flex-direction:column-reverse;min-width:7.2rem}
+.page .solarFacts dd{font-size:1.48rem;color:var(--green);font-weight:700;margin:0}
+.page .solarFacts dt{color:var(--muted);font-size:.82rem}
+.page .dataSources{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:12px}
+.page .dataSources a{font-size:.78rem;text-decoration:underline;text-underline-offset:3px;padding:6px 0;color:var(--muted)}
+.page .dataSources a:hover,.page .dataSources a:focus-visible{color:var(--green)}

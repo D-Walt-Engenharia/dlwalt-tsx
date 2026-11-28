@@ -264,10 +264,9 @@
   "Nova Brasilândia D'Oeste": {
     "references": [
       "Nova Brasilândia D’Oeste",
-      "RO-010",
-      "Migrantinópolis"
+      "RO-010"
     ],
-    "access": "A RO-010 liga Nova Brasilândia D’Oeste à região de Migrantinópolis. Na solicitação de atendimento, informe o endereço e como chegar ao imóvel.",
+    "access": "A RO-010 liga Nova Brasilândia D’Oeste a Migrantinópolis, distrito de Novo Horizonte do Oeste. Ao pedir uma visita, informe o município da instalação e o ponto de entrada da propriedade.",
     "arrival": "Envie a conta de energia, a localização e uma referência de acesso. Se o imóvel ficar em uma linha rural, identifique a linha e a entrada da propriedade.",
     "source": "https://rondonia.ro.gov.br/departamento-de-estradas-de-rodagem-recupera-trecho-da-ro-010-de-migrantinopolis-a-nova-brasilandia/"
   },
@@ -379,11 +378,11 @@
   "Rolim de Moura": {
     "references": [
       "Rolim de Moura",
-      "Centro"
+      "Nova Estrela"
     ],
     "access": "Para consultar a disponibilidade em Rolim de Moura, informe à matriz em Ariquemes o bairro ou a linha rural onde fica o imóvel.",
     "arrival": "O atendimento presencial da antiga unidade foi encerrado. A equipe de Ariquemes pode orientar você pelo WhatsApp.",
-    "source": "https://rondonia.ro.gov.br/sine-estadual-de-rolim-de-moura-passa-a-operar-em-novo-endereco/"
+    "source": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/1100288/distritos"
   },
   "Santa Luzia D'Oeste": {
     "references": [
@@ -472,10 +471,9 @@
   "Vale do Paraíso": {
     "references": [
       "Vale do Paraíso",
-      "RO-470",
-      "Distrito de Bom Jesus"
+      "RO-470"
     ],
-    "access": "Em Vale do Paraíso, a RO-470 também segue em direção ao distrito de Bom Jesus. Informe em qual localidade fica o imóvel para orientar o atendimento.",
+    "access": "A RO-470 é uma referência de acesso em Vale do Paraíso. Se o imóvel fica fora da sede, informe o trajeto a partir da rodovia e a localização da entrada.",
     "arrival": "Envie a conta de energia e a localização, com o distrito, a linha rural ou o bairro. A equipe confirma a avaliação e as condições de deslocamento.",
     "source": "https://rondonia.ro.gov.br/manutencao-de-revestimento-primario-e-realizada-pelo-governo-de-ro-nas-ro-470-e-ro-010-na-regiao-central/"
   },

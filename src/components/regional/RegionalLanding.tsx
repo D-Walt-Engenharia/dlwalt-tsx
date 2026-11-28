@@ -4,6 +4,8 @@ import { COMPANY_INFO } from '@/lib/data/company';
 import { SOLAR_SERVICES, type ServiceContent } from '@/lib/constants/services';
 import { regionalSlug } from '@/lib/regional-pages';
 import { regionalHeroIntro, regionalLocalCopy } from '@/lib/regional-local-content';
+import { municipalRecords } from '@/lib/regional-municipalities';
+import { MunicipalSolarFacts } from './MunicipalSolarFacts';
 import { RegionalEvidence, type RegionalProof } from './RegionalEvidence';
 import { localPageContent, localPageQuestions } from './local-page-content';
 import { RegionalIcon, WhatsAppIcon } from './RegionalIcons';
@@ -30,6 +32,7 @@ interface RegionalLandingProps {
 export function RegionalLanding({ city, service, evidence, trail }: RegionalLandingProps) {
     const copy = localPageContent(city, service.slug);
     const local = regionalLocalCopy(city);
+    const districts = municipalRecords[city]?.distritos ?? [];
     const questions = localPageQuestions(city, service.slug, evidence);
     const displayTitle = service.title.charAt(0) + service.title.slice(1).toLocaleLowerCase('pt-BR');
     const destination = service.ctaUrl || '/solicitar-orcamento';
@@ -77,6 +80,7 @@ export function RegionalLanding({ city, service, evidence, trail }: RegionalLand
                     <p>{affiliate ? `Para conhecer o programa e tirar dúvidas sobre indicações em ${city}, converse com a equipe da DWalt. As regras e as condições de participação estão disponíveis no portal de afiliados.` : local.text}</p>
                     <div className={styles.localChips} aria-label="Referências locais">{(affiliate ? [city, 'Rondônia'] : local.references).map(reference => <span key={reference}>{reference}</span>)}</div>
                     <p className={styles.localDetail}>{affiliate ? 'O cadastro e o acompanhamento das indicações são realizados no portal. Confirme os critérios do programa antes de participar.' : local.detail}</p>
+                    {districts.length > 0 && <p className={styles.districtText}><strong>Distritos de {city}</strong> {districts.join(', ')}.</p>}
                     <a className={styles.textLink} href={whatsapp} target="_blank" rel="noopener noreferrer">Conversar sobre atendimento em {city} <Arrow /></a>
                 </div>
                 <aside className={styles.addressCard} data-regional-reveal>
@@ -85,6 +89,7 @@ export function RegionalLanding({ city, service, evidence, trail }: RegionalLand
                     <a className={styles.mapLink} href={map} target="_blank" rel="noopener noreferrer">Ver endereço no mapa <Arrow /></a>
                     <div className={styles.addressPhone}><span>Fale com a equipe</span><a href={`tel:+${COMPANY_INFO.contact.whatsapp}`}>{COMPANY_INFO.contact.phone}</a></div>
                 </aside>
+                <MunicipalSolarFacts city={city} serviceSlug={service.slug} />
             </div></section>
             <section className={`${styles.section} ${styles.solutionsSection}`} id="beneficios-regionais"><div className={styles.wrap}>
                 <div className={styles.sectionHeading} data-regional-reveal><div><p className={styles.eyebrow}>{affiliate ? 'Conheça as etapas do programa' : 'O seu consumo é o ponto de partida'}</p><h2>{copy.benefitTitle[0]}<br /><span>{copy.benefitTitle[1]}</span></h2></div><p className={styles.sectionIntro}>{copy.benefitIntro}</p></div>

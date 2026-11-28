@@ -1,0 +1,737 @@
+{
+  "periodo": "2026-11",
+  "dataDoCadastro": "2026-11-27",
+  "fonteSolar": "https://dadosabertos.aneel.gov.br/dataset/relacao-de-empreendimentos-de-geracao-distribuida",
+  "licencaDadosSolares": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "metodo": "Cadastro de micro e minigeração distribuída da ANEEL. Contagem de códigos de empreendimento distintos, UF RO, fonte UFV, por município e classe de consumo. Inclui todas as instaladoras.",
+  "fonteMunicipios": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/11/municipios",
+  "fonteDistritos": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/11/distritos",
+  "municipios": {
+    "Alta Floresta D'Oeste": {
+      "codigoIbge": 1100015,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Filadélfia d'Oeste",
+        "Izidolândia",
+        "Nova Gease d'Oeste",
+        "Rolim de Moura do Guaporé",
+        "Santo Antônio d'Oeste"
+      ],
+      "total": 1381,
+      "classes": {
+        "Comercial": 94,
+        "Industrial": 7,
+        "Poder Público": 5,
+        "Residencial": 852,
+        "Rural": 423
+      }
+    },
+    "Alto Alegre dos Parecis": {
+      "codigoIbge": 1100379,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 344,
+      "classes": {
+        "Comercial": 15,
+        "Industrial": 1,
+        "Poder Público": 8,
+        "Residencial": 141,
+        "Rural": 179
+      }
+    },
+    "Alto Paraíso": {
+      "codigoIbge": 1100403,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 570,
+      "classes": {
+        "Comercial": 15,
+        "Poder Público": 4,
+        "Residencial": 331,
+        "Rural": 220
+      }
+    },
+    "Alvorada D'Oeste": {
+      "codigoIbge": 1100346,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Tancredópolis",
+        "Terra Boa"
+      ],
+      "total": 640,
+      "classes": {
+        "Comercial": 35,
+        "Industrial": 1,
+        "Poder Público": 5,
+        "Residencial": 331,
+        "Rural": 268
+      }
+    },
+    "Ariquemes": {
+      "codigoIbge": 1100023,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 5768,
+      "classes": {
+        "Comercial": 377,
+        "Industrial": 31,
+        "Poder Público": 20,
+        "Residencial": 4881,
+        "Rural": 459
+      }
+    },
+    "Buritis": {
+      "codigoIbge": 1100452,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 1458,
+      "classes": {
+        "Comercial": 111,
+        "Industrial": 5,
+        "Poder Público": 5,
+        "Residencial": 953,
+        "Rural": 384
+      }
+    },
+    "Cabixi": {
+      "codigoIbge": 1100031,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 253,
+      "classes": {
+        "Comercial": 26,
+        "Industrial": 2,
+        "Poder Público": 1,
+        "Residencial": 143,
+        "Rural": 81
+      }
+    },
+    "Cacaulândia": {
+      "codigoIbge": 1100601,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 240,
+      "classes": {
+        "Comercial": 10,
+        "Poder Público": 1,
+        "Residencial": 108,
+        "Rural": 121
+      }
+    },
+    "Cacoal": {
+      "codigoIbge": 1100049,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Divinópolis",
+        "Riozinho"
+      ],
+      "total": 4965,
+      "classes": {
+        "Comercial": 338,
+        "Industrial": 30,
+        "Poder Público": 18,
+        "Residencial": 3848,
+        "Rural": 731
+      }
+    },
+    "Campo Novo de Rondônia": {
+      "codigoIbge": 1100700,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 373,
+      "classes": {
+        "Comercial": 13,
+        "Poder Público": 3,
+        "Residencial": 104,
+        "Rural": 253
+      }
+    },
+    "Candeias do Jamari": {
+      "codigoIbge": 1100809,
+      "regiao": "Porto Velho",
+      "distritos": [
+        "Rio Preto do Candeias"
+      ],
+      "total": 362,
+      "classes": {
+        "Comercial": 33,
+        "Industrial": 4,
+        "Poder Público": 1,
+        "Residencial": 268,
+        "Rural": 56
+      }
+    },
+    "Castanheiras": {
+      "codigoIbge": 1100908,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 113,
+      "classes": {
+        "Comercial": 4,
+        "Residencial": 48,
+        "Rural": 61
+      }
+    },
+    "Cerejeiras": {
+      "codigoIbge": 1100056,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 820,
+      "classes": {
+        "Comercial": 65,
+        "Industrial": 5,
+        "Poder Público": 6,
+        "Residencial": 602,
+        "Rural": 142
+      }
+    },
+    "Chupinguaia": {
+      "codigoIbge": 1100924,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 203,
+      "classes": {
+        "Comercial": 21,
+        "Residencial": 120,
+        "Rural": 62
+      }
+    },
+    "Colorado do Oeste": {
+      "codigoIbge": 1100064,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 664,
+      "classes": {
+        "Comercial": 42,
+        "Industrial": 2,
+        "Poder Público": 5,
+        "Residencial": 457,
+        "Rural": 158
+      }
+    },
+    "Corumbiara": {
+      "codigoIbge": 1100072,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 219,
+      "classes": {
+        "Comercial": 28,
+        "Industrial": 1,
+        "Residencial": 115,
+        "Rural": 75
+      }
+    },
+    "Costa Marques": {
+      "codigoIbge": 1100080,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Real Forte Príncipe da Beira",
+        "São Domingos do Guaporé"
+      ],
+      "total": 268,
+      "classes": {
+        "Comercial": 26,
+        "Industrial": 1,
+        "Poder Público": 3,
+        "Residencial": 140,
+        "Rural": 98
+      }
+    },
+    "Cujubim": {
+      "codigoIbge": 1100940,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 483,
+      "classes": {
+        "Comercial": 21,
+        "Industrial": 2,
+        "Poder Público": 3,
+        "Residencial": 320,
+        "Rural": 137
+      }
+    },
+    "Espigão D'Oeste": {
+      "codigoIbge": 1100098,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Boa Vista do Pacarana",
+        "Flor da Serra",
+        "Nova Esperança",
+        "Novo Paraíso"
+      ],
+      "total": 1110,
+      "classes": {
+        "Comercial": 67,
+        "Industrial": 8,
+        "Poder Público": 4,
+        "Residencial": 788,
+        "Rural": 243
+      }
+    },
+    "Governador Jorge Teixeira": {
+      "codigoIbge": 1101005,
+      "regiao": "Jaru",
+      "distritos": [
+        "Colina Verde"
+      ],
+      "total": 327,
+      "classes": {
+        "Comercial": 14,
+        "Poder Público": 1,
+        "Residencial": 141,
+        "Rural": 171
+      }
+    },
+    "Guajará-Mirim": {
+      "codigoIbge": 1100106,
+      "regiao": "Porto Velho",
+      "distritos": [
+        "Iata",
+        "Surpresa"
+      ],
+      "total": 582,
+      "classes": {
+        "Comercial": 81,
+        "Industrial": 2,
+        "Poder Público": 7,
+        "Residencial": 480,
+        "Rural": 12
+      }
+    },
+    "Itapuã do Oeste": {
+      "codigoIbge": 1101104,
+      "regiao": "Porto Velho",
+      "distritos": [],
+      "total": 258,
+      "classes": {
+        "Comercial": 27,
+        "Industrial": 2,
+        "Residencial": 181,
+        "Rural": 48
+      }
+    },
+    "Jaru": {
+      "codigoIbge": 1100114,
+      "regiao": "Jaru",
+      "distritos": [
+        "Bom Jesus",
+        "Santa Cruz da Serra",
+        "Tarilândia"
+      ],
+      "total": 3105,
+      "classes": {
+        "Comercial": 206,
+        "Industrial": 12,
+        "Poder Público": 10,
+        "Residencial": 2266,
+        "Rural": 611
+      }
+    },
+    "Ji-Paraná": {
+      "codigoIbge": 1100122,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Nova Colina",
+        "Nova Londrina"
+      ],
+      "total": 7571,
+      "classes": {
+        "Comercial": 500,
+        "Industrial": 27,
+        "Poder Público": 22,
+        "Residencial": 6331,
+        "Rural": 691
+      }
+    },
+    "Machadinho D'Oeste": {
+      "codigoIbge": 1100130,
+      "regiao": "Jaru",
+      "distritos": [
+        "Oriente Novo",
+        "Quinto BEC",
+        "Tabajara"
+      ],
+      "total": 1148,
+      "classes": {
+        "Comercial": 73,
+        "Industrial": 2,
+        "Poder Público": 2,
+        "Residencial": 663,
+        "Rural": 408
+      }
+    },
+    "Ministro Andreazza": {
+      "codigoIbge": 1101203,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 289,
+      "classes": {
+        "Comercial": 17,
+        "Industrial": 1,
+        "Residencial": 129,
+        "Rural": 142
+      }
+    },
+    "Mirante da Serra": {
+      "codigoIbge": 1101302,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 477,
+      "classes": {
+        "Comercial": 26,
+        "Industrial": 1,
+        "Residencial": 257,
+        "Rural": 193
+      }
+    },
+    "Monte Negro": {
+      "codigoIbge": 1101401,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 519,
+      "classes": {
+        "Comercial": 16,
+        "Industrial": 2,
+        "Poder Público": 2,
+        "Residencial": 290,
+        "Rural": 209
+      }
+    },
+    "Nova Brasilândia D'Oeste": {
+      "codigoIbge": 1100148,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 691,
+      "classes": {
+        "Comercial": 44,
+        "Industrial": 2,
+        "Poder Público": 4,
+        "Residencial": 313,
+        "Rural": 328
+      }
+    },
+    "Nova Mamoré": {
+      "codigoIbge": 1100338,
+      "regiao": "Porto Velho",
+      "distritos": [
+        "Araras",
+        "Jacynópolis",
+        "Nova Dimensão",
+        "Nova Marechal Rondon",
+        "Palmeiras"
+      ],
+      "total": 485,
+      "classes": {
+        "Comercial": 41,
+        "Poder Público": 1,
+        "Residencial": 269,
+        "Rural": 174
+      }
+    },
+    "Nova União": {
+      "codigoIbge": 1101435,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 379,
+      "classes": {
+        "Comercial": 30,
+        "Industrial": 2,
+        "Residencial": 170,
+        "Rural": 177
+      }
+    },
+    "Novo Horizonte do Oeste": {
+      "codigoIbge": 1100502,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Migrantinópolis"
+      ],
+      "total": 261,
+      "classes": {
+        "Comercial": 14,
+        "Industrial": 2,
+        "Residencial": 101,
+        "Rural": 144
+      }
+    },
+    "Ouro Preto do Oeste": {
+      "codigoIbge": 1100155,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Rondominas"
+      ],
+      "total": 1602,
+      "classes": {
+        "Comercial": 108,
+        "Iluminação pública": 1,
+        "Industrial": 4,
+        "Poder Público": 6,
+        "Residencial": 1135,
+        "Rural": 348
+      }
+    },
+    "Parecis": {
+      "codigoIbge": 1101450,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 78,
+      "classes": {
+        "Comercial": 3,
+        "Poder Público": 1,
+        "Residencial": 48,
+        "Rural": 26
+      }
+    },
+    "Pimenta Bueno": {
+      "codigoIbge": 1100189,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Itaporanga",
+        "Marco Rondon"
+      ],
+      "total": 1508,
+      "classes": {
+        "Comercial": 120,
+        "Industrial": 8,
+        "Poder Público": 5,
+        "Residencial": 1182,
+        "Rural": 193
+      }
+    },
+    "Pimenteiras do Oeste": {
+      "codigoIbge": 1101468,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 22,
+      "classes": {
+        "Comercial": 5,
+        "Industrial": 1,
+        "Residencial": 11,
+        "Rural": 5
+      }
+    },
+    "Porto Velho": {
+      "codigoIbge": 1100205,
+      "regiao": "Porto Velho",
+      "distritos": [
+        "Abunã",
+        "Calama",
+        "Demarcação",
+        "Extrema",
+        "Fortaleza do Abunã",
+        "Jaci Paraná",
+        "Mutum Paraná",
+        "Nazaré",
+        "Nova Califórnia",
+        "São Carlos",
+        "Vista Alegre do Abunã"
+      ],
+      "total": 15577,
+      "classes": {
+        "Comercial": 1215,
+        "Industrial": 43,
+        "Poder Público": 137,
+        "Residencial": 13843,
+        "Rural": 339
+      }
+    },
+    "Presidente Médici": {
+      "codigoIbge": 1100254,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Estrela de Rondônia",
+        "Novo Riachuelo",
+        "Vila Bandeira Branca",
+        "Vila Camargo"
+      ],
+      "total": 1169,
+      "classes": {
+        "Comercial": 76,
+        "Industrial": 2,
+        "Poder Público": 6,
+        "Residencial": 759,
+        "Rural": 326
+      }
+    },
+    "Primavera de Rondônia": {
+      "codigoIbge": 1101476,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 157,
+      "classes": {
+        "Comercial": 6,
+        "Residencial": 74,
+        "Rural": 77
+      }
+    },
+    "Rio Crespo": {
+      "codigoIbge": 1100262,
+      "regiao": "Ariquemes",
+      "distritos": [],
+      "total": 165,
+      "classes": {
+        "Comercial": 1,
+        "Poder Público": 1,
+        "Residencial": 95,
+        "Rural": 68
+      }
+    },
+    "Rolim de Moura": {
+      "codigoIbge": 1100288,
+      "regiao": "Cacoal",
+      "distritos": [
+        "Nova Estrela"
+      ],
+      "total": 2457,
+      "classes": {
+        "Comercial": 160,
+        "Industrial": 14,
+        "Poder Público": 7,
+        "Residencial": 1883,
+        "Rural": 393
+      }
+    },
+    "Santa Luzia D'Oeste": {
+      "codigoIbge": 1100296,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 275,
+      "classes": {
+        "Comercial": 14,
+        "Poder Público": 2,
+        "Residencial": 139,
+        "Rural": 120
+      }
+    },
+    "São Felipe D'Oeste": {
+      "codigoIbge": 1101484,
+      "regiao": "Cacoal",
+      "distritos": [],
+      "total": 260,
+      "classes": {
+        "Comercial": 11,
+        "Industrial": 1,
+        "Residencial": 141,
+        "Rural": 107
+      }
+    },
+    "São Francisco do Guaporé": {
+      "codigoIbge": 1101492,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Pedras Negras",
+        "Porto Murtinho",
+        "Santo Antônio do Guaporé"
+      ],
+      "total": 534,
+      "classes": {
+        "Comercial": 35,
+        "Industrial": 1,
+        "Residencial": 286,
+        "Rural": 212
+      }
+    },
+    "São Miguel do Guaporé": {
+      "codigoIbge": 1100320,
+      "regiao": "Ji-Paraná",
+      "distritos": [
+        "Santana do Guaporé"
+      ],
+      "total": 892,
+      "classes": {
+        "Comercial": 49,
+        "Industrial": 1,
+        "Poder Público": 3,
+        "Residencial": 504,
+        "Rural": 335
+      }
+    },
+    "Seringueiras": {
+      "codigoIbge": 1101500,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 460,
+      "classes": {
+        "Comercial": 26,
+        "Industrial": 3,
+        "Poder Público": 1,
+        "Residencial": 229,
+        "Rural": 201
+      }
+    },
+    "Teixeirópolis": {
+      "codigoIbge": 1101559,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 288,
+      "classes": {
+        "Comercial": 9,
+        "Residencial": 128,
+        "Rural": 151
+      }
+    },
+    "Theobroma": {
+      "codigoIbge": 1101609,
+      "regiao": "Jaru",
+      "distritos": [],
+      "total": 1396,
+      "classes": {
+        "Comercial": 72,
+        "Industrial": 6,
+        "Poder Público": 1,
+        "Residencial": 936,
+        "Rural": 381
+      }
+    },
+    "Urupá": {
+      "codigoIbge": 1101708,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 760,
+      "classes": {
+        "Comercial": 44,
+        "Industrial": 2,
+        "Poder Público": 3,
+        "Residencial": 418,
+        "Rural": 293
+      }
+    },
+    "Vale do Anari": {
+      "codigoIbge": 1101757,
+      "regiao": "Jaru",
+      "distritos": [],
+      "total": 317,
+      "classes": {
+        "Comercial": 14,
+        "Residencial": 141,
+        "Rural": 162
+      }
+    },
+    "Vale do Paraíso": {
+      "codigoIbge": 1101807,
+      "regiao": "Ji-Paraná",
+      "distritos": [],
+      "total": 257,
+      "classes": {
+        "Comercial": 8,
+        "Industrial": 1,
+        "Poder Público": 2,
+        "Residencial": 109,
+        "Rural": 137
+      }
+    },
+    "Vilhena": {
+      "codigoIbge": 1100304,
+      "regiao": "Vilhena",
+      "distritos": [],
+      "total": 2256,
+      "classes": {
+        "Comercial": 251,
+        "Industrial": 14,
+        "Poder Público": 10,
+        "Residencial": 1814,
+        "Rural": 167
+      }
+    }
+  }
+}

@@ -194,8 +194,13 @@ test('regional descriptions match the service and city without generic savings p
             assert.match(description, /instalação de energia solar em Cacaulândia/i);
             assert.match(description, /equipe de Ariquemes/);
         } else {
-            assert(description.startsWith(SOLAR_SERVICES[index].title + ' em Cacaulândia, RO.'));
-            assert(description.includes('Atendimento regional sob agendamento.'));
+            const terms = {
+                'energia-solar-residencial': /telhado/, 'energia-solar-empresarial': /horário de funcionamento/,
+                'energia-solar-industrial': /turnos/, 'engenharia-eletrica': /carga prevista/,
+                'manutencao-e-limpeza': /inversor/, 'instalacao-fotovoltaica': /padrão de entrada/, afiliados: /portal/,
+            };
+            assert(description.includes('Cacaulândia'));
+            assert.match(description, terms[SOLAR_SERVICES[index].slug]);
         }
         assert(!/95%|100%|garantid|payback|comiss[oõ]es/i.test(description));
     }
@@ -233,4 +238,47 @@ test('every specialty links to its city hub using its published canonical suffix
         assert.equal(trail.length, primary ? 3 : 4);
         if (!primary) assert.equal(trail.at(-2).href, '/' + regionalSlug('energia-solar', city));
     }
+});
+
+test('all 52 municipalities have traceable solar counts and city-specific guidance', () => {
+    const { RONDONIA_CITIES } = load('src/lib/constants/rondonia-cities.ts');
+    const { municipalRecords, normalizePlace, solarReferenceMonth } = load('src/lib/regional-municipalities.ts');
+    const intake = load('src/lib/data/regional-intake.json');
+    assert.deepEqual(Object.keys(municipalRecords).sort(), [...RONDONIA_CITIES].sort());
+    assert.deepEqual(Object.keys(intake).sort(), [...RONDONIA_CITIES].sort());
+    assert.equal(new Set(Object.values(intake)).size, 52);
+    assert.equal(new Set(Object.values(municipalRecords).map(m => m.codigoIbge)).size, 52);
+    assert.equal(new Set(Object.values(municipalRecords).map(m => m.regiao)).size, 6);
+    for (const [name, item] of Object.entries(municipalRecords)) {
+        assert.equal(Object.values(item.classes).reduce((a,b) => a+b, 0), item.total, name);
+        assert.equal(item.distritos.includes(name), false, name);
+    }
+    assert.equal(municipalRecords['Cacaulândia'].total, 240);
+    assert.equal(solarReferenceMonth, 'novembro de 2026');
+    const search = term => Object.entries(municipalRecords).filter(([name, m]) =>
+        [name, ...m.distritos].some(place => normalizePlace(place).includes(normalizePlace(term)))).map(([name]) => name);
+    assert.deepEqual(search('tarilandia'), ['Jaru']);
+    assert.deepEqual(search('nova londrina'), ['Ji-Paraná']);
+    assert.deepEqual(search('migrantinopolis'), ['Novo Horizonte do Oeste']);
+    assert.deepEqual(search('espigao doeste'), ["Espigão D'Oeste"]);
+    assert.deepEqual(search('ji parana'), ['Ji-Paraná']);
+});
+
+test('service metadata, visible explanations and project attribution span the whole state', () => {
+    const { regionalPages } = load('src/lib/regional-pages.ts');
+    const { regionalTitle, regionalDescription, regionalHeroIntro } = load('src/lib/regional-local-content.ts');
+    const titles = new Set(), descriptions = new Set();
+    for (const { service, city } of regionalPages()) {
+        const title = regionalTitle(city, service), description = regionalDescription(city, service);
+        assert(title.includes(city) && description.includes(city), title);
+        assert(regionalHeroIntro(city, service.slug).length > 50, title);
+        titles.add(title); descriptions.add(description);
+    }
+    assert.equal(titles.size, 416);
+    assert.equal(descriptions.size, 416);
+    const service = { slug: 'energia-solar', title: 'Energia Solar' };
+    const project = { name: 'Obra de teste', city: 'Jaru', kwp: '11', panelCount: 20 };
+    assert.match(regionalDescription('Jaru', service, project), /Obra de teste com 11 kWp e 20 painéis/);
+    assert.doesNotMatch(regionalDescription('Vilhena', service, project), /Obra de teste/);
+    assert.doesNotMatch(regionalDescription('Rolim de Moura', service, {...project,city:'Rolim de Moura'}), /Obra de teste/);
 });

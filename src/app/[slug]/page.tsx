@@ -83,7 +83,14 @@ export default async function LandingPage({ params }: Props) {
     const { service, city, canonical, evidence, description } = data;
     const trail = regionalBreadcrumbs(city, service, canonical);
 
-    const jsonLd = {
+    const jsonLd = city === 'Rolim de Moura' ? {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: regionalTitle(city, service),
+        description,
+        url: `${SITE_URL}/${canonical}`,
+        publisher: { '@id': ORGANIZATION_ID },
+    } : {
         "@context": "https://schema.org",
         "@type": "Service",
         "@id": `${SITE_URL}/${canonical}#service`,
