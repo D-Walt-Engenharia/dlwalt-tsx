@@ -10,6 +10,7 @@ import { RegionalEvidence, type RegionalProof } from './RegionalEvidence';
 import { localPageContent, localPageQuestions } from './local-page-content';
 import { RegionalIcon, WhatsAppIcon } from './RegionalIcons';
 import { RegionalMotion } from './RegionalMotion';
+import { RegionalProjectOptions } from './RegionalProjectOptions';
 import styles from './RegionalPage.module.css';
 
 const Arrow = () => <RegionalIcon name="arrow" />;
@@ -34,7 +35,8 @@ export function RegionalLanding({ city, service, evidence, trail }: RegionalLand
     const local = regionalLocalCopy(city);
     const districts = municipalRecords[city]?.distritos ?? [];
     const questions = localPageQuestions(city, service.slug, evidence);
-    const displayTitle = service.title.charAt(0) + service.title.slice(1).toLocaleLowerCase('pt-BR');
+    const installation = service.slug === 'instalacao-fotovoltaica' && city !== 'Rolim de Moura';
+    const displayTitle = installation ? 'Instalação de placas solares' : service.title.charAt(0) + service.title.slice(1).toLocaleLowerCase('pt-BR');
     const destination = service.ctaUrl || '/solicitar-orcamento';
     const external = service.ctaUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {};
     const affiliate = service.slug === 'afiliados';
@@ -94,11 +96,13 @@ export function RegionalLanding({ city, service, evidence, trail }: RegionalLand
             <section className={`${styles.section} ${styles.solutionsSection}`} id="beneficios-regionais"><div className={styles.wrap}>
                 <div className={styles.sectionHeading} data-regional-reveal><div><p className={styles.eyebrow}>{affiliate ? 'Conheça as etapas do programa' : 'O seu consumo é o ponto de partida'}</p><h2>{copy.benefitTitle[0]}<br /><span>{copy.benefitTitle[1]}</span></h2></div><p className={styles.sectionIntro}>{copy.benefitIntro}</p></div>
                 <div className={styles.solutionsGrid}>{copy.solutions.map(solution => <article className={styles.solution} key={solution.title} data-regional-reveal><RegionalIcon name={solution.icon} /><h3>{solution.title}</h3><p>{solution.text}</p></article>)}</div>
-                <div className={styles.journey} data-regional-reveal>{copy.journey.map(([title, text], index) => <div key={title}><span>0{index + 1}</span><p><strong>{title}</strong>{text}</p></div>)}</div>
+                {service.slug === 'energia-solar' && city !== 'Rolim de Moura'
+                    ? <RegionalProjectOptions city={city} />
+                    : <div className={styles.journey} data-regional-reveal>{copy.journey.map(([title, text], index) => <div key={title}><span>0{index + 1}</span><p><strong>{title}</strong>{text}</p></div>)}</div>}
             </div></section>
             <section className={`${styles.section} ${styles.faqSection}`} id="duvidas-regionais"><div className={`${styles.wrap} ${styles.faqGrid}`}>
                 <div data-regional-reveal><p className={styles.eyebrow}>Respostas para decidir melhor</p><h2>{displayTitle}<br />em {city}:<br /> <span>suas dúvidas.</span></h2><p>Uma conversa clara vem antes de qualquer proposta.</p></div>
-                <div className={styles.faqs} data-regional-reveal>{questions.map(item => <details key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+                <div className={styles.faqs} data-regional-reveal>{questions.map(item => <details key={item.question} id={item.id}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
             </div></section>
             <section className={styles.closing} id="comece-seu-projeto"><div className={`${styles.wrap} ${styles.closingInner}`} data-regional-reveal>
                 <div><p className={styles.eyebrow}>{affiliate ? 'Conheça as condições para participar' : 'O próximo projeto pode ser o seu'}</p><h2>{affiliate ? <>Sua próxima indicação<br />pode começar aqui.</> : service.slug === 'manutencao-e-limpeza' ? <>Vamos cuidar da energia<br />que o seu sistema produz?</> : service.slug === 'engenharia-eletrica' ? <>Vamos conversar sobre<br />o seu projeto elétrico?</> : <>Vamos olhar para a<br />sua conta de energia?</>}</h2><p>Converse com a DWalt sobre {affiliate ? 'o programa de afiliados' : 'o seu imóvel'} em {city}.</p></div>

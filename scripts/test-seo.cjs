@@ -282,3 +282,28 @@ test('service metadata, visible explanations and project attribution span the wh
     assert.doesNotMatch(regionalDescription('Vilhena', service, project), /Obra de teste/);
     assert.doesNotMatch(regionalDescription('Rolim de Moura', service, {...project,city:'Rolim de Moura'}), /Obra de teste/);
 });
+
+test('local buying questions use the correct service, city and available office', () => {
+    const { localPageContent, localPageQuestions } = load('src/components/regional/local-page-content.ts');
+    const { unitInCity } = load('src/lib/local-evidence.ts');
+    const { RONDONIA_CITIES } = load('src/lib/constants/rondonia-cities.ts');
+    for (const city of RONDONIA_CITIES) {
+        const evidence = { unit: unitInCity(city), localProjects: [] };
+        const main = localPageQuestions(city, 'energia-solar', evidence);
+        const installation = localPageQuestions(city, 'instalacao-fotovoltaica', evidence);
+        const company = main.find(item => item.id === 'empresa-solar');
+        const kit = installation.find(item => item.id === 'kit-solar');
+        if (city === 'Rolim de Moura') {
+            assert.equal(company, undefined);
+            assert.equal(kit, undefined);
+            assert.match(main[0].answer, /encerrado/);
+            continue;
+        }
+        assert(company.question.includes(city));
+        assert(company.answer.includes(evidence.unit?.address ?? 'matriz em Ariquemes'));
+        assert(kit.question.includes(city));
+        assert.match(kit.answer, /módulos.*inversor.*estrutura/);
+        assert.equal(main.some(item => item.id === 'kit-solar'), false);
+        assert(localPageContent(city, 'energia-solar-residencial').benefitIntro.includes(city));
+    }
+});

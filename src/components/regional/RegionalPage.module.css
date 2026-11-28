@@ -347,3 +347,7 @@
 .page .dataSources{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:12px}
 .page .dataSources a{font-size:.78rem;text-decoration:underline;text-underline-offset:3px;padding:6px 0;color:var(--muted)}
 .page .dataSources a:hover,.page .dataSources a:focus-visible{color:var(--green)}
+.page .projectOptions>div{display:block;min-width:0}
+.page .projectOptions h3{font-size:1.1rem;line-height:1.4}
+.page .projectOptions p{margin-top:.5rem;font-size:1rem;line-height:1.55;color:var(--muted)}
+.page .projectOptions .textLink{min-height:44px;font-size:1rem;margin-top:.35rem}
