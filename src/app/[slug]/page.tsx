@@ -1,10 +1,12 @@
 import { RegionalLanding } from "@/components/regional/RegionalLanding";
 import { notFound } from "next/navigation";
-import { findRegionalPage, regionalPages } from "@/lib/regional-pages";
+import { findRegionalPage, regionalBreadcrumbs, regionalPages } from "@/lib/regional-pages";
 import { ORGANIZATION_ID, SITE_URL } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { Metadata } from "next";
-import { regionalDescription } from "@/lib/regional-local-content";
+import { regionalDescription, regionalTitle } from "@/lib/regional-local-content";
+
+import { getRegionalEvidence } from "@/components/regional/RegionalEvidence";
 
 export const revalidate = 300;
 
@@ -18,7 +20,10 @@ interface Props {
 }
 
 async function getData(slug: string) {
-    return findRegionalPage(slug);
+    const page = findRegionalPage(slug);
+    if (!page) return null;
+    const evidence = await getRegionalEvidence(page.city);
+    return { ...page, evidence, description: regionalDescription(page.city, page.service, evidence.localProjects[0]) };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -29,10 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         return {};
     }
 
-    const { service, city, canonical } = data;
-
-    const title = `${service.title} em ${city} - RO | DWalt Energia`;
-    const description = regionalDescription(city, service);
+    const { service, city, canonical, description } = data;
+    const title = regionalTitle(city, service);
 
     return {
         title,
@@ -77,9 +80,8 @@ export default async function LandingPage({ params }: Props) {
         notFound();
     }
 
-    const { service, city, canonical } = data;
-
-    const description = regionalDescription(city, service);
+    const { service, city, canonical, evidence, description } = data;
+    const trail = regionalBreadcrumbs(city, service, canonical);
 
     const jsonLd = {
         "@context": "https://schema.org",
@@ -95,11 +97,9 @@ export default async function LandingPage({ params }: Props) {
 
     const breadcrumb = {
         '@context': 'https://schema.org', '@type': 'BreadcrumbList',
-        itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Início', item: SITE_URL },
-            { '@type': 'ListItem', position: 2, name: 'Cidades atendidas', item: `${SITE_URL}/areas-de-atendimento` },
-            { '@type': 'ListItem', position: 3, name: `${service.title} em ${city}`, item: `${SITE_URL}/${canonical}` },
-        ],
+        itemListElement: trail.map((link, index) => ({
+            '@type': 'ListItem', position: index + 1, name: link.name, item: new URL(link.href, SITE_URL).href,
+        })),
     };
-    return <><JsonLd data={jsonLd} /><JsonLd data={breadcrumb} /><RegionalLanding city={city} service={service} /></>;
+    return <><JsonLd data={jsonLd} /><JsonLd data={breadcrumb} /><RegionalLanding city={city} service={service} evidence={evidence} trail={trail} /></>;
 }

@@ -4,7 +4,7 @@ import { COMPANY_INFO } from '@/lib/data/company';
 import { SOLAR_SERVICES, type ServiceContent } from '@/lib/constants/services';
 import { regionalSlug } from '@/lib/regional-pages';
 import { regionalHeroIntro, regionalLocalCopy } from '@/lib/regional-local-content';
-import { getRegionalEvidence, RegionalEvidence } from './RegionalEvidence';
+import { RegionalEvidence, type RegionalProof } from './RegionalEvidence';
 import { localPageContent, localPageQuestions } from './local-page-content';
 import { RegionalIcon, WhatsAppIcon } from './RegionalIcons';
 import { RegionalMotion } from './RegionalMotion';
@@ -20,10 +20,16 @@ function addressLines(address: string) {
     return { main, detail };
 }
 
-export async function RegionalLanding({ city, service }: { city: string; service: ServiceContent }) {
+interface RegionalLandingProps {
+    city: string;
+    service: ServiceContent;
+    evidence: RegionalProof;
+    trail: { name: string; href: string }[];
+}
+
+export function RegionalLanding({ city, service, evidence, trail }: RegionalLandingProps) {
     const copy = localPageContent(city, service.slug);
     const local = regionalLocalCopy(city);
-    const evidence = await getRegionalEvidence(city);
     const questions = localPageQuestions(city, service.slug, evidence);
     const displayTitle = service.title.charAt(0) + service.title.slice(1).toLocaleLowerCase('pt-BR');
     const destination = service.ctaUrl || '/solicitar-orcamento';
@@ -33,10 +39,11 @@ export async function RegionalLanding({ city, service }: { city: string; service
     const contactUnit = evidence.unit || COMPANY_INFO.units[0];
     const contactTitle = evidence.unit ? `${contactUnit.id === 'matriz' ? 'Matriz' : 'Unidade'} · ${city}` : 'Contato da matriz · Ariquemes';
     const address = addressLines(contactUnit.address);
-    const confirmLocation = contactUnit.id === 'rolim-de-moura';
-    const map = confirmLocation ? whatsapp : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address.main}, ${contactUnit.city} - RO`)}`;
+    const contactNote = city === 'Rolim de Moura' ? 'Consulte a disponibilidade com a matriz' : `Atendimento em ${city} sob agendamento`;
+    const map = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address.main}, ${contactUnit.city} - RO`)}`;
     const navigation = <><a href="#projetos-locais">Projetos</a><a href="#atendimento-local">Atendimento local</a><a href="#duvidas-regionais">Dúvidas</a><Link className={styles.smallCta} href={destination} {...external}>{affiliate ? 'Conhecer o programa' : 'Solicitar orçamento'} <Arrow /></Link></>;
     const energy = ['energia-solar', 'energia-solar-residencial'].includes(service.slug);
+    const localCase = service.slug === 'energia-solar' && evidence.localProjects.length === 1 ? evidence.localProjects[0] : undefined;
     return <div className={styles.page} id="regional-page" data-regional-model="premium-local">
         <RegionalMotion key={`${service.slug}:${city}`} />
         <header className={styles.siteHeader} id="inicio-regional"><div className={`${styles.wrap} ${styles.headerInner}`}>
@@ -53,7 +60,12 @@ export async function RegionalLanding({ city, service }: { city: string; service
                     <h1 id="regional-title">{displayTitle}<br />em <span>{city}.</span></h1>
                     <p className={styles.heroPromise}>{copy.promise[0]}<br />{copy.promise[1]}</p>
                     <p className={styles.heroDescription}>{regionalHeroIntro(city, service.slug)}</p>
-                    <div className={styles.heroActions}><Link className={`${styles.button} ${styles.primary}`} href={destination} {...external}>{copy.cta}<Arrow /></Link><a className={styles.heroSecondary} href="#projetos-locais">Ver projetos com fotos <span aria-hidden="true">↓</span></a></div>
+                    <div className={styles.heroActions}>
+                        <Link className={`${styles.button} ${styles.primary}`} href={destination} {...external}>{copy.cta}<Arrow /></Link>
+                        {localCase
+                            ? <Link className={styles.heroSecondary} href={`/projetos/${localCase.id}`}>Ver o projeto {localCase.name} <Arrow /></Link>
+                            : <a className={styles.heroSecondary} href="#projetos-locais">Ver projetos com fotos <span aria-hidden="true">↓</span></a>}
+                    </div>
                     <p className={styles.heroNote}>{affiliate ? 'Consulte as regras e condições de participação no portal.' : energy ? 'Para sua casa, sua empresa e seu imóvel rural.' : 'Avaliação e proposta de acordo com a sua necessidade.'}</p>
                 </div></div>
             </section>
@@ -69,8 +81,8 @@ export async function RegionalLanding({ city, service }: { city: string; service
                 </div>
                 <aside className={styles.addressCard} data-regional-reveal>
                     <div className={styles.addressTop}><span className={styles.pinTile}><RegionalIcon name="pin" /></span><span className={styles.eyebrow}>Ponto de atendimento</span></div>
-                    <h3>{contactTitle}</h3><address><strong>{address.main}</strong><span>{address.detail.map((line, index) => <Fragment key={line}>{index > 0 && <br />}{line}</Fragment>)}</span>{!evidence.unit && <span>Atendimento em {city} sob agendamento</span>}</address>
-                    <a className={styles.mapLink} href={map} target="_blank" rel="noopener noreferrer">{confirmLocation ? 'Confirmar localização com a equipe' : 'Ver endereço no mapa'} <Arrow /></a>
+                    <h3>{contactTitle}</h3><address><strong>{address.main}</strong><span>{address.detail.map((line, index) => <Fragment key={line}>{index > 0 && <br />}{line}</Fragment>)}</span>{!evidence.unit && <span>{contactNote}</span>}</address>
+                    <a className={styles.mapLink} href={map} target="_blank" rel="noopener noreferrer">Ver endereço no mapa <Arrow /></a>
                     <div className={styles.addressPhone}><span>Fale com a equipe</span><a href={`tel:+${COMPANY_INFO.contact.whatsapp}`}>{COMPANY_INFO.contact.phone}</a></div>
                 </aside>
             </div></section>
@@ -91,12 +103,17 @@ export async function RegionalLanding({ city, service }: { city: string; service
         <footer className={styles.siteFooter}><div className={styles.wrap}>
             <div className={styles.footerMain}>
                 <div><Link href="/" aria-label="DWalt Energia"><img className={styles.brand} src="/logo-branca.svg" alt="DWalt Energia" width={148} height={38} loading="lazy" /></Link><p>Energia que vem do alto.</p></div>
-                <div className={styles.footerContact}><strong>{contactTitle}</strong><p>{address.main}<br />{address.detail.join(' · ')}{!evidence.unit && <><br />Atendimento em {city} sob agendamento</>}</p><a href={`tel:+${COMPANY_INFO.contact.whatsapp}`}>{COMPANY_INFO.contact.phone}</a></div>
+                <div className={styles.footerContact}><strong>{contactTitle}</strong><p>{address.main}<br />{address.detail.join(' · ')}{!evidence.unit && <><br />{contactNote}</>}</p><a href={`tel:+${COMPANY_INFO.contact.whatsapp}`}>{COMPANY_INFO.contact.phone}</a></div>
                 <nav aria-label="Mais informações"><Link href="/projetos">Projetos</Link><Link href="/areas-de-atendimento">Cidades atendidas</Link><Link href="/unidades">Nossas unidades</Link><Link href="/blog">Conteúdo sobre energia</Link></nav>
             </div>
-            <nav className={styles.breadcrumbs} aria-label="Navegação por cidade"><Link href="/">Início</Link><span aria-hidden="true">›</span><Link href="/areas-de-atendimento">Cidades atendidas</Link><span aria-hidden="true">›</span><span>{service.title} em {city}</span></nav>
+            <nav className={styles.breadcrumbs} aria-label="Navegação por cidade">
+                {trail.map((link, index) => <Fragment key={link.href}>
+                    {index > 0 && <span aria-hidden="true">›</span>}
+                    {index === trail.length - 1 ? <span aria-current="page">{link.name}</span> : <Link href={link.href}>{link.name}</Link>}
+                </Fragment>)}
+            </nav>
             <details className={styles.moreServices}><summary>Outras soluções em {city}</summary><nav aria-label={`Serviços em ${city}`}>{SOLAR_SERVICES.filter(other => other.slug !== service.slug).map(other => <Link key={other.slug} href={`/${regionalSlug(other.slug, city)}`}>{other.title} em {city}</Link>)}</nav></details>
-            <div className={styles.footerBottom}><span>© 2026 DWalt Energia · {city}, RO</span><span>Ariquemes · Porto Velho · Rolim de Moura</span></div>
+            <div className={styles.footerBottom}><span>© 2026 DWalt Energia · {city}, RO</span><span>{COMPANY_INFO.units.map(unit => unit.city).join(' · ')}</span></div>
         </div></footer>
         <a id="regional-whatsapp" className={styles.floatingWhatsapp} href={whatsapp} target="_blank" rel="noopener noreferrer" aria-label={`Falar com a DWalt pelo WhatsApp sobre ${service.title} em ${city}`}><span className={styles.whatsappTooltip}>Fale com a DWalt</span><WhatsAppIcon /></a>
     </div>;

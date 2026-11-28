@@ -145,6 +145,7 @@ test('project evidence matches the city, accents and state without borrowing nea
     assert.equal(projectsInCity(projects, 'Porto Velho').length, 0);
     assert.equal(unitInCity('Ariquemes').id, 'matriz');
     assert.equal(unitInCity('Vilhena'), undefined);
+    assert.equal(unitInCity('Rolim de Moura'), undefined);
 });
 
 test('every existing municipality has sourced access references and an honest contact type', () => {
@@ -158,7 +159,7 @@ test('every existing municipality has sourced access references and an honest co
         assert(profile.access.trim().length > 0 && profile.arrival.trim().length > 0, city);
         const source = new URL(profile.source);
         assert(source.protocol === 'https:' && /(?:^|\.)(?:gov\.br|ro\.gov\.br)$/.test(source.hostname), city + ' primary source');
-        if (!['Ariquemes', 'Porto Velho', 'Rolim de Moura'].includes(city)) assert.equal(regionalLocalCopy(city).kicker, 'Atendimento regional', city);
+        if (!['Ariquemes', 'Porto Velho'].includes(city)) assert.equal(regionalLocalCopy(city).kicker, 'Atendimento regional', city);
     }
     assert(regionalCityProfile('Cacaulândia').references.includes('RO-140'));
     assert(regionalCityProfile('Rio Crespo').references.includes('RO-459'));
@@ -189,8 +190,47 @@ test('regional descriptions match the service and city without generic savings p
     const descriptions = SOLAR_SERVICES.map(service => regionalDescription('Cacaulândia', service));
     assert.equal(new Set(descriptions).size, SOLAR_SERVICES.length);
     for (const [index, description] of descriptions.entries()) {
-        assert(description.startsWith(SOLAR_SERVICES[index].title + ' em Cacaulândia, RO.'));
-        assert(description.includes('Atendimento regional sob agendamento.'));
+        if (SOLAR_SERVICES[index].slug === 'energia-solar') {
+            assert.match(description, /instalação de energia solar em Cacaulândia/i);
+            assert.match(description, /equipe de Ariquemes/);
+        } else {
+            assert(description.startsWith(SOLAR_SERVICES[index].title + ' em Cacaulândia, RO.'));
+            assert(description.includes('Atendimento regional sob agendamento.'));
+        }
         assert(!/95%|100%|garantid|payback|comiss[oõ]es/i.test(description));
+    }
+});
+
+
+test('city search copy uses only verified local project data and the matching service', () => {
+    const { regionalDescription, regionalTitle } = load('src/lib/regional-local-content.ts');
+    const solar = { slug: 'energia-solar', title: 'Energia Solar' };
+    const other = { slug: 'engenharia-eletrica', title: 'Engenharia Elétrica' };
+    const project = { name: 'SUPER MERCADO BM PREÇO', location: 'CACAULANDIA-RO', kwp: '132.00', panelCount: 220 };
+    assert.match(regionalDescription('Cacaulândia', solar, project), /BM PREÇO com 132 kWp e 220 painéis/);
+    const fallback = regionalDescription('Cacaulândia', solar);
+    assert.equal(regionalDescription('Cacaulândia', solar, { ...project, city: 'Ariquemes' }), fallback);
+    assert.equal(regionalDescription('Cacaulândia', solar, { ...project, panelCount: 0 }), fallback);
+    assert.equal(regionalDescription('Cacaulândia', solar, { ...project, kwp: null }), fallback);
+    assert.doesNotMatch(regionalDescription('Cacaulândia', other, project), /BM PREÇO/);
+    assert.match(regionalTitle('Cacoal', solar), /Energia solar em Cacoal.*instalação/i);
+    assert.match(regionalDescription('Porto Velho', solar), /Rua Mestre Gabriel, 5368/);
+    assert.match(regionalDescription('Rolim de Moura', solar), /Consulte a matriz/);
+    const maintenance = { slug: 'manutencao-e-limpeza', title: 'Manutenção e Limpeza' };
+    assert.match(regionalDescription('Porto Velho', maintenance), /produção recente do inversor/);
+    const residential = { slug: 'energia-solar-residencial', title: 'Energia Solar Residencial' };
+    assert.match(regionalTitle('Ariquemes', residential), /Placas solares para casas em Ariquemes/);
+    assert.doesNotMatch(regionalTitle('Ariquemes', solar), /para casas/);
+});
+
+test('every specialty links to its city hub using its published canonical suffix', () => {
+    const { regionalPages, regionalBreadcrumbs, regionalSlug } = load('src/lib/regional-pages.ts');
+    for (const { service, city, canonical } of regionalPages()) {
+        const trail = regionalBreadcrumbs(city, service, canonical);
+        assert.equal(trail.at(-1).href, '/' + canonical);
+        assert.equal(new Set(trail.map(step => step.href)).size, trail.length);
+        const primary = service.slug === 'energia-solar';
+        assert.equal(trail.length, primary ? 3 : 4);
+        if (!primary) assert.equal(trail.at(-2).href, '/' + regionalSlug('energia-solar', city));
     }
 });

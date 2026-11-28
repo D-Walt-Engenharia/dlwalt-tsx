@@ -1,15 +1,16 @@
 import Link from 'next/link';
+import { cache } from 'react';
 import { getAllContent, type PublicProject } from '@/lib/public-content';
 import { projectCity, regionalPortfolio, unitInCity } from '@/lib/local-evidence';
 import { RegionalIcon } from './RegionalIcons';
 import styles from './RegionalPage.module.css';
 
-export async function getRegionalEvidence(city: string) {
+export const getRegionalEvidence = cache(async (city: string) => {
     const unit = unitInCity(city);
     let allProjects: PublicProject[] = [];
     try { allProjects = await getAllContent('projects'); } catch { /* Preserve service and contact during a portfolio outage. */ }
     return { unit, ...regionalPortfolio(allProjects, city) };
-}
+});
 export type RegionalProof = Awaited<ReturnType<typeof getRegionalEvidence>>;
 
 function ProjectCard({ project }: { project: PublicProject }) {

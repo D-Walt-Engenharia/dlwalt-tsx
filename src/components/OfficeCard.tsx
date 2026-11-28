@@ -1,13 +1,16 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { trackContact } from '@/lib/tracking';
 
 interface OfficeCardProps {
+    cityHref: string;
     unit: {
         name: string;
+        city: string;
         address: string;
         phone: string;
         whatsapp: string;
@@ -15,7 +18,7 @@ interface OfficeCardProps {
     };
 }
 
-const OfficeCard: React.FC<OfficeCardProps> = ({ unit }) => {
+const OfficeCard: React.FC<OfficeCardProps> = ({ unit, cityHref }) => {
     return (
         <div className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 group">
             <div className="p-8">
@@ -37,6 +40,7 @@ const OfficeCard: React.FC<OfficeCardProps> = ({ unit }) => {
                     </div>
                 </div>
 
+                <Link className="mb-5 inline-block text-primary underline underline-offset-4" href={cityHref}>Energia solar em {unit.city}</Link>
                 <div className="flex gap-3">
                     <Button
                         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold"

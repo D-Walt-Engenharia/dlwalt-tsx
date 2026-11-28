@@ -379,11 +379,10 @@
   "Rolim de Moura": {
     "references": [
       "Rolim de Moura",
-      "Centro",
-      "Av. 25 de Agosto"
+      "Centro"
     ],
-    "access": "A Avenida 25 de Agosto passa pelo Centro de Rolim de Moura. Informe o bairro e uma referência de acesso ao imóvel para conversar sobre o atendimento.",
-    "arrival": "Confirme a localização da unidade com a equipe antes da visita. Para atendimento no imóvel, envie a localização e um ponto de referência.",
+    "access": "Para consultar a disponibilidade em Rolim de Moura, informe à matriz em Ariquemes o bairro ou a linha rural onde fica o imóvel.",
+    "arrival": "O atendimento presencial da antiga unidade foi encerrado. A equipe de Ariquemes pode orientar você pelo WhatsApp.",
     "source": "https://rondonia.ro.gov.br/sine-estadual-de-rolim-de-moura-passa-a-operar-em-novo-endereco/"
   },
   "Santa Luzia D'Oeste": {
