@@ -114,7 +114,7 @@ export default function SolarCalculatorPage() {
 
 
 
-        const simulationText = `Olá, fiz uma simulação no site.\n\n*Simulação realizada:*\n- Cidade/UF: ${cityUf}\n- Consumo mensal: ${kwhValue} kWh\n- Sistema Estimado: ${systemSizeVal.toFixed(2)} kWp\n- Economia Mensal: ${formattedMonthlySavings}\n- Retorno (Payback): ${formattedPayback}\n- Economia Total (25 anos): ${formattedTotalSavings}`;
+        const simulationText = `Olá, fiz uma simulação no site.\n\n*Simulação realizada:*\n- Cidade/UF: ${cityUf}\n- Consumo mensal: ${kwhValue} kWh\n- Placas estimadas: ${panelsVal} de ${REFERENCE_PANEL_WATTS} W\n- Sistema Estimado: ${systemSizeVal.toFixed(2)} kWp\n- Economia Mensal: ${formattedMonthlySavings}\n- Retorno (Payback): ${formattedPayback}\n- Economia Total (25 anos): ${formattedTotalSavings}`;
 
         setResult({
             irradiation: REFERENCE_SUN_HOURS.toFixed(2),
@@ -204,14 +204,15 @@ export default function SolarCalculatorPage() {
                                     </div>
                                     <p className="text-xs text-gray-500">Verifique este valor na sua conta de luz.</p>
                                     <fieldset id="consumo-em-kwh" className="scroll-mt-24 space-y-2">
-                                        <legend className="font-medium">Quantas placas solares preciso para o meu consumo?</legend>
-                                        <p className="text-sm text-gray-300">Escolha um exemplo para simular. A estimativa usa módulos de {REFERENCE_PANEL_WATTS} W e {REFERENCE_SUN_HOURS.toLocaleString('pt-BR')} horas de sol pleno por dia. Sombra, orientação do telhado e perdas alteram a geração real.</p>
-                                        <div className="flex flex-wrap gap-2">
+                                        <legend className="font-medium">Qual kit de energia solar atende ao meu consumo mensal?</legend>
+                                        <p className="text-sm text-gray-300">Escolha o kit com o consumo mais próximo da média da sua fatura ou digite outro valor acima. A estimativa usa módulos de {REFERENCE_PANEL_WATTS} W e {REFERENCE_SUN_HOURS.toLocaleString('pt-BR')} horas de sol pleno por dia. Sombra, orientação do telhado e perdas alteram a geração real.</p>
+                                        <div className="grid grid-cols-2 gap-2">
                                             {MONTHLY_CONSUMPTION_EXAMPLES.map(consumption => (
-                                                <button key={consumption} type="button" aria-pressed={kwh === consumption}
+                                                <button key={consumption} id={`kit-${consumption}-kwh`} type="button" aria-pressed={kwh === consumption}
                                                     className="rounded-lg border border-white/30 px-3 py-2 text-sm aria-pressed:border-primary"
                                                     onClick={() => { setKwh(consumption); setResult(null); }}>
-                                                    {consumption.toLocaleString('pt-BR')} kWh/mês · {estimateSolarArray(consumption).panels} placas
+                                                    <span className="block font-medium">Kit de {consumption.toLocaleString('pt-BR')} kWh/mês</span>
+                                                    <span className="text-gray-300">Cerca de {estimateSolarArray(consumption).panels} placas</span>
                                                 </button>
                                             ))}
                                         </div>

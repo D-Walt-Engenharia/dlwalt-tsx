@@ -10,7 +10,7 @@ export function RegionalProjectOptions({ city }: { city: string }) {
         </div>
         <div id="simulacao-solar">
             <h3>Simulação de energia solar</h3>
-            <p>Compare exemplos de 600, 1.000 e 1.500 kWh por mês ou use o consumo da sua fatura para estimar a potência e a quantidade de placas.</p>
+            <p>Compare kits de energia solar para consumos de 500 a 2.000 kWh por mês ou use o consumo da sua fatura para estimar a potência e a quantidade de placas.</p>
             <Link className={styles.textLink} href="/calculadora-solar">Calcular meu sistema</Link>
         </div>
         <div id="financiamento-solar">

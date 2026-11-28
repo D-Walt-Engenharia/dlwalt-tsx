@@ -12,7 +12,7 @@ export const irradiationData: Record<string, number> = {
 // Keep the illustrative examples and the interactive calculator on the same assumptions.
 export const REFERENCE_SUN_HOURS = 4.5;
 export const REFERENCE_PANEL_WATTS = 550;
-export const MONTHLY_CONSUMPTION_EXAMPLES = [600, 1000, 1500] as const;
+export const MONTHLY_CONSUMPTION_EXAMPLES = [500, 600, 800, 900, 1000, 1200, 1500, 1800, 2000] as const;
 
 export function estimateSolarArray(monthlyKwh: number) {
     const systemSize = monthlyKwh / (30 * REFERENCE_SUN_HOURS);

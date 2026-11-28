@@ -324,5 +324,6 @@ test('price and panel searches respect service areas and the reviewed consumptio
             if (matches.length) assert(matches[0].question.includes(city));
         }
     }
-    assert.deepEqual(MONTHLY_CONSUMPTION_EXAMPLES.map(kwh => estimateSolarArray(kwh).panels), [9, 14, 21]);
+    assert.deepEqual(MONTHLY_CONSUMPTION_EXAMPLES, [500, 600, 800, 900, 1000, 1200, 1500, 1800, 2000]);
+    assert.deepEqual(MONTHLY_CONSUMPTION_EXAMPLES.map(kwh => estimateSolarArray(kwh).panels), [7, 9, 11, 13, 14, 17, 21, 25, 27]);
 });
